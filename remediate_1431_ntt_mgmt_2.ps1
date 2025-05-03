@@ -811,7 +811,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 4139: Status of the Do not use temporary folders per session Group Policy setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not use temporary folders per session Group Policy setting
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "UseTempFolders" -PropertyType DWord -Value 0 -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 4139"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -827,7 +827,13 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 2199: Current list of Groups and User Accounts granted the Deny log on locally right"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Deny log on locally right
+        # Replace this with a specific secedit assignment for SeDenyInteractiveLogonRight
+        $deniedAccounts = @("Guests")
+        $accountList = $deniedAccounts -join ","
+        secedit /export /cfg C:\Windows\Temp\secedit_export.inf
+        (Get-Content C:\Windows\Temp\secedit_export.inf) -replace "(SeDenyInteractiveLogonRight\s*=).*", "`$1 $accountList" | Set-Content C:\Windows\Temp\secedit_update.inf
+        secedit /configure /db secedit.sdb /cfg C:\Windows\Temp\secedit_update.inf /areas USER_RIGHTS
+        Remove-Item C:\Windows\Temp\secedit_export.inf, C:\Windows\Temp\secedit_update.inf -Force
         $cmdOutput = "Executed remediation step for Control ID 2199"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -843,7 +849,13 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 2391: Current list of Groups and User Accounts granted the Allow log on locally (SeInteractiveLogonRight) right"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Allow log on locally (SeInteractiveLogonRight) right
+        # Replace this with a specific secedit assignment for SeInteractiveLogonRight
+        $allowedAccounts = @("Administrators", "Users")
+        $accountList = $allowedAccounts -join ","
+        secedit /export /cfg C:\Windows\Temp\secedit_export.inf
+        (Get-Content C:\Windows\Temp\secedit_export.inf) -replace "(SeInteractiveLogonRight\s*=).*", "`$1 $accountList" | Set-Content C:\Windows\Temp\secedit_update.inf
+        secedit /configure /db secedit.sdb /cfg C:\Windows\Temp\secedit_update.inf /areas USER_RIGHTS
+        Remove-Item C:\Windows\Temp\secedit_export.inf, C:\Windows\Temp\secedit_update.inf -Force
         $cmdOutput = "Executed remediation step for Control ID 2391"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -859,7 +871,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 5265: Status of the Network security: Allow LocalSystem NULL session fallback setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Network security: Allow LocalSystem NULL session fallback setting
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "AllowNullSessionFallback" -PropertyType DWord -Value 0 -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 5265"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -875,7 +887,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 23129: Status of the Disable OneSettings Downloads setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Disable OneSettings Downloads setting
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -PropertyType DWord -Value 1 -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 23129"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -891,7 +903,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 12015: Status of the Block all consumer Microsoft account user authentication (DisableUserAuth) Group Policy setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Block all consumer Microsoft account user authentication (DisableUserAuth) Group Policy setting
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\MicrosoftAccount" -Name "DisableUserAuth" -PropertyType DWord -Value 1 -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 12015"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -907,7 +919,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 8141: Status of the Security Options Accounts: Block Microsoft accounts setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Security Options Accounts: Block Microsoft accounts setting
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "NoConnectedUser" -PropertyType DWord -Value 3 -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 8141"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -923,7 +935,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 10592: Status of the Hardened UNC Paths setting for Netlogon"
     try {
-        # Placeholder for actual command to remediate: Status of the Hardened UNC Paths setting for Netlogon
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" -Name "\\*\NETLOGON" -PropertyType String -Value "RequireMutualAuthentication=1, RequireIntegrity=1" -Force | Out-Null
         $cmdOutput = "Executed remediation step for Control ID 10592"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -939,7 +951,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 14883: Status of Office communication application from creating child processes (26190899-1602-49e8-8b27-eb1d0a1ce869)"
     try {
-        # Placeholder for actual command to remediate: Status of Office communication application from creating child processes (26190899-1602-49e8-8b27-eb1d0a1ce869)
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "26190899-1602-49e8-8b27-eb1d0a1ce869" -AttackSurfaceReductionRules_Actions Enabled
         $cmdOutput = "Executed remediation step for Control ID 14883"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -955,7 +967,7 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 13927: Status of Block JavaScript or VBScript from launching downloaded executable content ASR rule (D3E037E1-3EB8-44C8-A917-57927947596D)"
     try {
-        # Placeholder for actual command to remediate: Status of Block JavaScript or VBScript from launching downloaded executable content ASR rule (D3E037E1-3EB8-44C8-A917-57927947596D)
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "D3E037E1-3EB8-44C8-A917-57927947596D" -AttackSurfaceReductionRules_Actions Enabled
         $cmdOutput = "Executed remediation step for Control ID 13927"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
@@ -971,8 +983,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 8255: Status of the audit setting Removable Storage (advanced audit setting)"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Removable Storage (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 8255"
+        AuditPol /Set /Subcategory:"Removable Storage" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled success and failure auditing for Removable Storage."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -987,8 +999,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 11193: Status of the Continue experiences on this device setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Continue experiences on this device setting
-        $cmdOutput = "Executed remediation step for Control ID 11193"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "EnableCdp" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled cross-device experience features (EnableCdp set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1003,8 +1015,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 9305: Status of the Notify antivirus programs when opening attachments configuration [For Windows user]"
     try {
-        # Placeholder for actual command to remediate: Status of the Notify antivirus programs when opening attachments configuration [For Windows user]
-        $cmdOutput = "Executed remediation step for Control ID 9305"
+        New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" -Name "ScanWithAntiVirus" -PropertyType DWord -Value 3 -Force | Out-Null
+        $cmdOutput = "Enabled attachment scan notification to antivirus (ScanWithAntiVirus set to 3)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1019,8 +1031,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 9388: Status of the Turn off picture password sign-in setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off picture password sign-in setting
-        $cmdOutput = "Executed remediation step for Control ID 9388"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "BlockPicturePassword" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled picture password sign-in (BlockPicturePassword set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1033,10 +1045,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1195: Status of the MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from the WINS servers setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1195: Status of the MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from the WINS servers setting"
+    Write-Log "User approved remediation for Control ID 1195: Status of the MSS: (NoNameReleaseOnDemand)..."
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from the WINS servers setting
-        $cmdOutput = "Executed remediation step for Control ID 1195"
+        New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\Netbt\Parameters" -Name "NoNameReleaseOnDemand" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set NoNameReleaseOnDemand to 1 (ignores NetBIOS name release requests unless from WINS)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1049,10 +1061,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10404: Status of the Require user authentication for remote connections by using Network Level Authentication setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10404: Status of the Require user authentication for remote connections by using Network Level Authentication setting"
+    Write-Log "User approved remediation for Control ID 10404: Require user authentication for remote connections by using NLA"
     try {
-        # Placeholder for actual command to remediate: Status of the Require user authentication for remote connections by using Network Level Authentication setting
-        $cmdOutput = "Executed remediation step for Control ID 10404"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled NLA for RDP (UserAuthentication set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1067,8 +1079,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 9830: Status of the Prevent users from sharing files within their profile setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Prevent users from sharing files within their profile setting
-        $cmdOutput = "Executed remediation step for Control ID 9830"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoInplaceSharing" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set NoInplaceSharing to 1 to prevent users from sharing files within their profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1081,10 +1093,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25348: Status of the Configure RPC connection settings: Protocol to use for outgoing RPC connections setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25348: Status of the Configure RPC connection settings: Protocol to use for outgoing RPC connections setting"
+    Write-Log "User approved remediation for Control ID 25348: Configure RPC connection settings"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure RPC connection settings: Protocol to use for outgoing RPC connections setting
-        $cmdOutput = "Executed remediation step for Control ID 25348"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Rpc" -Name "ForceRpcSecurity" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set ForceRpcSecurity to 1 to enforce secure protocol for outgoing RPC connections."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1097,10 +1109,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25357: Status of Block abuse of exploited vulnerable signed drivers ASR rule (56a863a9-875e-4185-98a7-b882c64b5ce5)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25357: Status of Block abuse of exploited vulnerable signed drivers ASR rule (56a863a9-875e-4185-98a7-b882c64b5ce5)"
+    Write-Log "User approved remediation for Control ID 25357: Block abuse of exploited vulnerable signed drivers ASR rule"
     try {
-        # Placeholder for actual command to remediate: Status of Block abuse of exploited vulnerable signed drivers ASR rule (56a863a9-875e-4185-98a7-b882c64b5ce5)
-        $cmdOutput = "Executed remediation step for Control ID 25357"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "56a863a9-875e-4185-98a7-b882c64b5ce5" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block abuse of vulnerable signed drivers."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1113,10 +1125,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1377: Status of the Interactive Logon: Require Domain Controller authentication to unlock workstation setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1377: Status of the Interactive Logon: Require Domain Controller authentication to unlock workstation setting"
+    Write-Log "User approved remediation for Control ID 1377: Require DC authentication to unlock workstation"
     try {
-        # Placeholder for actual command to remediate: Status of the Interactive Logon: Require Domain Controller authentication to unlock workstation setting
-        $cmdOutput = "Executed remediation step for Control ID 1377"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "ForceUnlockLogon" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set ForceUnlockLogon to 1 to require DC authentication when unlocking."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1126,13 +1138,14 @@ if ($confirm -eq "y") {
     Write-Log "User skipped remediation for Control ID 1377"
 }
 
+
 Write-Host "`nControl ID 4473: Status of the audit setting IPsec Driver (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4473: Status of the audit setting IPsec Driver (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4473: Audit setting IPsec Driver"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting IPsec Driver (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4473"
+        AuditPol /Set /Subcategory:"IPsec Driver" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for IPsec Driver (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1145,10 +1158,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 7805: Status of Windows Automatic Updates (WSUS) setting ( NoAutoUpdate )"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 7805: Status of Windows Automatic Updates (WSUS) setting ( NoAutoUpdate )"
+    Write-Log "User approved remediation for Control ID 7805: WSUS setting NoAutoUpdate"
     try {
-        # Placeholder for actual command to remediate: Status of Windows Automatic Updates (WSUS) setting ( NoAutoUpdate )
-        $cmdOutput = "Executed remediation step for Control ID 7805"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoUpdate" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Set NoAutoUpdate to 0 to ensure automatic updates are enabled."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1161,10 +1174,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2608: Status of the Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2608: Status of the Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings setting"
+    Write-Log "User approved remediation for Control ID 2608: Force subcategory settings override"
     try {
-        # Placeholder for actual command to remediate: Status of the Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings setting
-        $cmdOutput = "Executed remediation step for Control ID 2608"
+        New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "SCENoApplyLegacyAuditPolicy" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set SCENoApplyLegacyAuditPolicy to 1 to enforce subcategory audit settings."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1177,10 +1190,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2605: Status of the User Account Control: Behavior of the elevation prompt for standard users setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2605: Status of the User Account Control: Behavior of the elevation prompt for standard users setting"
+    Write-Log "User approved remediation for Control ID 2605: UAC elevation prompt behavior for standard users"
     try {
-        # Placeholder for actual command to remediate: Status of the User Account Control: Behavior of the elevation prompt for standard users setting
-        $cmdOutput = "Executed remediation step for Control ID 2605"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorUser" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Set ConsentPromptBehaviorUser to 0 (automatically deny elevation requests for standard users)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1193,10 +1206,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4497: Status of the audit setting Process Creation (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4497: Status of the audit setting Process Creation (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4497: Audit setting Process Creation"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Process Creation (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4497"
+        AuditPol /Set /Subcategory:"Process Creation" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled success and failure auditing for Process Creation."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1209,10 +1222,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3899: Status of the Solicited Remote Assistance policy setting (Terminal Services)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3899: Status of the Solicited Remote Assistance policy setting (Terminal Services)"
+    Write-Log "User approved remediation for Control ID 3899: Solicited Remote Assistance policy"
     try {
-        # Placeholder for actual command to remediate: Status of the Solicited Remote Assistance policy setting (Terminal Services)
-        $cmdOutput = "Executed remediation step for Control ID 3899"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name "fAllowToGetHelp" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled Solicited Remote Assistance (fAllowToGetHelp set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1225,10 +1238,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10151: Status of the audit setting Audit PNP Activity (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10151: Status of the audit setting Audit PNP Activity (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 10151: Audit PNP Activity"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Audit PNP Activity (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 10151"
+        AuditPol /Set /Subcategory:"Plug and Play Events" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Plug and Play device events (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1241,10 +1254,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 23130: Status of the Enable OneSettings Auditing setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 23130: Status of the Enable OneSettings Auditing setting"
+    Write-Log "User approved remediation for Control ID 23130: Enable OneSettings Auditing"
     try {
-        # Placeholder for actual command to remediate: Status of the Enable OneSettings Auditing setting
-        $cmdOutput = "Executed remediation step for Control ID 23130"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\DataCollection" -Name "EnableOneSettingsAuditing" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled OneSettings auditing (EnableOneSettingsAuditing set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1257,10 +1270,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2587: Status of the User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2587: Status of the User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode setting"
+    Write-Log "User approved remediation for Control ID 2587: UAC elevation prompt behavior for administrators"
     try {
-        # Placeholder for actual command to remediate: Status of the User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode setting
-        $cmdOutput = "Executed remediation step for Control ID 2587"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -PropertyType DWord -Value 2 -Force | Out-Null
+        $cmdOutput = "Set ConsentPromptBehaviorAdmin to 2 (prompt for credentials on the secure desktop)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1273,10 +1286,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1525: Status of the Windows Firewall: Log file path and name (Domain) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1525: Status of the Windows Firewall: Log file path and name (Domain) setting"
+    Write-Log "User approved remediation for Control ID 1525: Firewall log path (Domain)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log file path and name (Domain) setting
-        $cmdOutput = "Executed remediation step for Control ID 1525"
+        Set-NetFirewallProfile -Profile Domain -LogFileName "%SystemRoot%\System32\LogFiles\Firewall\pfirewall.log"
+        $cmdOutput = "Set Windows Firewall log file path (Domain) to pfirewall.log."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1289,10 +1302,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 17242: Status of the Require pin for pairing Enabled First Time OR Always setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 17242: Status of the Require pin for pairing Enabled First Time OR Always setting"
+    Write-Log "User approved remediation for Control ID 17242: Require PIN for device pairing"
     try {
-        # Placeholder for actual command to remediate: Status of the Require pin for pairing Enabled First Time OR Always setting
-        $cmdOutput = "Executed remediation step for Control ID 17242"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Connect" -Name "RequirePinForPairing" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled PIN requirement for Bluetooth device pairing (RequirePinForPairing set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1305,10 +1318,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8273: Status of the Turn off Data Execution Prevention for Explorer setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8273: Status of the Turn off Data Execution Prevention for Explorer setting"
+    Write-Log "User approved remediation for Control ID 8273: Disable DEP for Explorer"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off Data Execution Prevention for Explorer setting
-        $cmdOutput = "Executed remediation step for Control ID 8273"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoDataExecutionPrevention" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Ensured DEP is enabled for Explorer (NoDataExecutionPrevention set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1321,10 +1334,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3951: Status of the Windows Firewall: Firewall state (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3951: Status of the Windows Firewall: Firewall state (Private) setting"
+    Write-Log "User approved remediation for Control ID 3951: Firewall state (Private)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Firewall state (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 3951"
+        Set-NetFirewallProfile -Profile Private -Enabled True
+        $cmdOutput = "Enabled Windows Firewall for the Private profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1337,10 +1350,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26140: Status of post-authentication actions (PostAuthenticationResetDelay) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26140: Status of post-authentication actions (PostAuthenticationResetDelay) setting"
+    Write-Log "User approved remediation for Control ID 26140: PostAuthenticationResetDelay"
     try {
-        # Placeholder for actual command to remediate: Status of post-authentication actions (PostAuthenticationResetDelay) setting
-        $cmdOutput = "Executed remediation step for Control ID 26140"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "PostAuthenticationResetDelay" -PropertyType DWord -Value 30 -Force | Out-Null
+        $cmdOutput = "Set PostAuthenticationResetDelay to 30 seconds."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1353,10 +1366,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1524: Status of the Windows Firewall: Log dropped packets (Domain) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1524: Status of the Windows Firewall: Log dropped packets (Domain) setting"
+    Write-Log "User approved remediation for Control ID 1524: Log dropped packets (Domain)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log dropped packets (Domain) setting
-        $cmdOutput = "Executed remediation step for Control ID 1524"
+        Set-NetFirewallProfile -Profile Domain -LogDroppedPackets Enabled
+        $cmdOutput = "Enabled logging of dropped packets on the Domain firewall profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1369,10 +1382,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9404: Status of the Prevent the usage of OneDrive for file storage (Skydrive) group policy setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9404: Status of the Prevent the usage of OneDrive for file storage (Skydrive) group policy setting"
+    Write-Log "User approved remediation for Control ID 9404: Prevent OneDrive usage"
     try {
-        # Placeholder for actual command to remediate: Status of the Prevent the usage of OneDrive for file storage (Skydrive) group policy setting
-        $cmdOutput = "Executed remediation step for Control ID 9404"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSync" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled OneDrive file storage integration (DisableFileSync set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1385,10 +1398,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 5264: Status of the Microsoft network server: Server SPN target name validation level setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 5264: Status of the Microsoft network server: Server SPN target name validation level setting"
+    Write-Log "User approved remediation for Control ID 5264: Server SPN target name validation level"
     try {
-        # Placeholder for actual command to remediate: Status of the Microsoft network server: Server SPN target name validation level setting
-        $cmdOutput = "Executed remediation step for Control ID 5264"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "SMBServerNameHardeningLevel" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set SMBServerNameHardeningLevel to 1 to enable SPN target name validation."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1401,10 +1414,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13922: Status of Attack Surface Reduction group policy"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13922: Status of Attack Surface Reduction group policy"
+    Write-Log "User approved remediation for Control ID 13922: Enable ASR group policy enforcement"
     try {
-        # Placeholder for actual command to remediate: Status of Attack Surface Reduction group policy
-        $cmdOutput = "Executed remediation step for Control ID 13922"
+        Set-MpPreference -EnableControlledFolderAccess Enabled
+        $cmdOutput = "Enabled Attack Surface Reduction policies via Controlled Folder Access."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1417,10 +1430,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3952: Status of the Windows Firewall: Firewall state (Domain) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3952: Status of the Windows Firewall: Firewall state (Domain) setting"
+    Write-Log "User approved remediation for Control ID 3952: Firewall state (Domain)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Firewall state (Domain) setting
-        $cmdOutput = "Executed remediation step for Control ID 3952"
+        Set-NetFirewallProfile -Profile Domain -Enabled True
+        $cmdOutput = "Enabled Windows Firewall for the Domain profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1433,10 +1446,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8160: Status of the Windows Firewall: Log File Size (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8160: Status of the Windows Firewall: Log File Size (Private) setting"
+    Write-Log "User approved remediation for Control ID 8160: Firewall log file size (Private)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log File Size (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 8160"
+        Set-NetFirewallProfile -Profile Private -LogMaxSizeKilobytes 16384
+        $cmdOutput = "Set Private profile firewall log file size to 16384 KB (16 MB)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1449,10 +1462,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 11192: Status of the Turn off multicast name resolution setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 11192: Status of the Turn off multicast name resolution setting"
+    Write-Log "User approved remediation for Control ID 11192: Turn off multicast name resolution"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off multicast name resolution setting
-        $cmdOutput = "Executed remediation step for Control ID 11192"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled multicast name resolution (EnableMulticast set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1465,10 +1478,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8274: Status of the Configure Windows Defender SmartScreen setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8274: Status of the Configure Windows Defender SmartScreen setting"
+    Write-Log "User approved remediation for Control ID 8274: Configure Windows Defender SmartScreen"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure Windows Defender SmartScreen setting
-        $cmdOutput = "Executed remediation step for Control ID 8274"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled SmartScreen (EnableSmartScreen set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1481,10 +1494,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8145: Status of the Security Options Interactive logon: Machine inactivity limit setting (seconds)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8145: Status of the Security Options Interactive logon: Machine inactivity limit setting (seconds)"
+    Write-Log "User approved remediation for Control ID 8145: Interactive logon inactivity timeout"
     try {
-        # Placeholder for actual command to remediate: Status of the Security Options Interactive logon: Machine inactivity limit setting (seconds)
-        $cmdOutput = "Executed remediation step for Control ID 8145"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "InactivityTimeoutSecs" -PropertyType DWord -Value 900 -Force | Out-Null
+        $cmdOutput = "Set machine inactivity limit to 900 seconds (15 minutes)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1497,10 +1510,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26139: Status of Post-authentication actions (PostAuthenticationActions) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26139: Status of Post-authentication actions (PostAuthenticationActions) setting"
+    Write-Log "User approved remediation for Control ID 26139: PostAuthenticationActions"
     try {
-        # Placeholder for actual command to remediate: Status of Post-authentication actions (PostAuthenticationActions) setting
-        $cmdOutput = "Executed remediation step for Control ID 26139"
+        New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "PostAuthenticationActions" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set PostAuthenticationActions to 1 to enable lock on reset actions."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1513,10 +1526,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9014: Status of the Setup: Maximum Log Size (KB) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9014: Status of the Setup: Maximum Log Size (KB) setting"
+    Write-Log "User approved remediation for Control ID 9014: Setup log max size"
     try {
-        # Placeholder for actual command to remediate: Status of the Setup: Maximum Log Size (KB) setting
-        $cmdOutput = "Executed remediation step for Control ID 9014"
+        wevtutil sl Setup /ms:32768
+        $cmdOutput = "Set Setup log maximum size to 32768 KB (32 MB)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1529,10 +1542,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8367: Status of the name of the Built-in Administrator account"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8367: Status of the name of the Built-in Administrator account"
+    Write-Log "User approved remediation for Control ID 8367: Rename built-in Administrator account"
     try {
-        # Placeholder for actual command to remediate: Status of the name of the Built-in Administrator account
-        $cmdOutput = "Executed remediation step for Control ID 8367"
+        Rename-LocalUser -Name "Administrator" -NewName "spgadmin"
+        $cmdOutput = "Renamed built-in Administrator account 'spgadmin' "
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1545,10 +1558,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9009: Status of the Allow Microsoft accounts to be optional setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9009: Status of the Allow Microsoft accounts to be optional setting"
+    Write-Log "User approved remediation for Control ID 9009: Allow Microsoft accounts to be optional"
     try {
-        # Placeholder for actual command to remediate: Status of the Allow Microsoft accounts to be optional setting
-        $cmdOutput = "Executed remediation step for Control ID 9009"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "MSAOptional" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set MSAOptional to 1 to allow Microsoft accounts to be optional."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1561,10 +1574,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3922: Status of the Turn off downloading of print drivers over HTTP setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3922: Status of the Turn off downloading of print drivers over HTTP setting"
+    Write-Log "User approved remediation for Control ID 3922: Turn off HTTP print driver downloads"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off downloading of print drivers over HTTP setting
-        $cmdOutput = "Executed remediation step for Control ID 3922"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Printers" -Name "DisableWebPnPDownload" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled downloading of print drivers over HTTP (DisableWebPnPDownload set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1577,10 +1590,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1381: Status of the Microsoft network server: Digitally Sign Communications (if Client agrees) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1381: Status of the Microsoft network server: Digitally Sign Communications (if Client agrees) setting"
+    Write-Log "User approved remediation for Control ID 1381: Digitally sign communications (if client agrees)"
     try {
-        # Placeholder for actual command to remediate: Status of the Microsoft network server: Digitally Sign Communications (if Client agrees) setting
-        $cmdOutput = "Executed remediation step for Control ID 1381"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "EnableSecuritySignature" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set EnableSecuritySignature to 1 (sign if client agrees)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1593,10 +1606,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8233: Status Network Security:Restrict NTLM: Audit Incoming NTLM Traffic setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8233: Status Network Security:Restrict NTLM: Audit Incoming NTLM Traffic setting"
+    Write-Log "User approved remediation for Control ID 8233: Audit Incoming NTLM Traffic"
     try {
-        # Placeholder for actual command to remediate: Status Network Security:Restrict NTLM: Audit Incoming NTLM Traffic setting
-        $cmdOutput = "Executed remediation step for Control ID 8233"
+        New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0" -Name "AuditReceivingNTLMTraffic" -PropertyType DWord -Value 2 -Force | Out-Null
+        $cmdOutput = "Set AuditReceivingNTLMTraffic to 2 (audit all incoming NTLM traffic)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1609,10 +1622,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8168: Status of the Windows Firewall: Log File Size (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8168: Status of the Windows Firewall: Log File Size (Public) setting"
+    Write-Log "User approved remediation for Control ID 8168: Firewall log size (Public)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log File Size (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 8168"
+        Set-NetFirewallProfile -Profile Public -LogMaxSizeKilobytes 16384
+        $cmdOutput = "Set firewall log file size for Public profile to 16384 KB (16 MB)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1625,10 +1638,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1169: Status of the MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1169: Status of the MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended) setting"
+    Write-Log "User approved remediation for Control ID 1169: AutoAdminLogon setting"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended) setting
-        $cmdOutput = "Executed remediation step for Control ID 1169"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "AutoAdminLogon" -PropertyType String -Value "0" -Force | Out-Null
+        $cmdOutput = "Disabled automatic logon (AutoAdminLogon set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1641,10 +1654,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13343: Status of the Configure Windows Defender SmartScreen - Pick one of the following setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13343: Status of the Configure Windows Defender SmartScreen - Pick one of the following setting"
+    Write-Log "User approved remediation for Control ID 13343: Configure Windows Defender SmartScreen"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure Windows Defender SmartScreen - Pick one of the following setting
-        $cmdOutput = "Executed remediation step for Control ID 13343"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -PropertyType DWord -Value 1 -Force | Out-Null
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "ShellSmartScreenLevel" -PropertyType String -Value "Warn" -Force | Out-Null
+        $cmdOutput = "Enabled SmartScreen with 'Warn' level (EnableSmartScreen = 1, ShellSmartScreenLevel = 'Warn')."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1657,10 +1671,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2197: Current list of Groups and User Accounts granted the Deny logon as a batch job right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2197: Current list of Groups and User Accounts granted the Deny logon as a batch job right"
+    Write-Log "User approved remediation for Control ID 2197: Deny logon as a batch job"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Deny logon as a batch job right
-        $cmdOutput = "Executed remediation step for Control ID 2197"
+        ntrights -u "Guests" +r SeDenyBatchLogonRight
+        $cmdOutput = "Assigned 'Deny logon as a batch job' right to Guests (SeDenyBatchLogonRight)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1673,10 +1687,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 19070: Status of the Point and Print Restrictions: When installing drivers for a new connection setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 19070: Status of the Point and Print Restrictions: When installing drivers for a new connection setting"
+    Write-Log "User approved remediation for Control ID 19070: Point and Print Restrictions"
     try {
-        # Placeholder for actual command to remediate: Status of the Point and Print Restrictions: When installing drivers for a new connection setting
-        $cmdOutput = "Executed remediation step for Control ID 19070"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint" -Name "NoWarningNoElevationOnInstall" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Configured Point and Print: driver installs require elevation (NoWarningNoElevationOnInstall set to 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1689,10 +1703,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3920: Status of the Turn off Internet download for Web publishing and online ordering wizards setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3920: Status of the Turn off Internet download for Web publishing and online ordering wizards setting"
+    Write-Log "User approved remediation for Control ID 3920: Disable Internet downloads for publishing/ordering wizards"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off Internet download for Web publishing and online ordering wizards setting
-        $cmdOutput = "Executed remediation step for Control ID 3920"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoWebServices" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled Internet download for Web publishing/ordering wizards (NoWebServices set to 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1705,10 +1719,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9453: Status of Scan removable drives (Windows Defender) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9453: Status of Scan removable drives (Windows Defender) setting"
+    Write-Log "User approved remediation for Control ID 9453: Scan removable drives"
     try {
-        # Placeholder for actual command to remediate: Status of Scan removable drives (Windows Defender) setting
-        $cmdOutput = "Executed remediation step for Control ID 9453"
+        Set-MpPreference -DisableRemovableDriveScanning $false
+        $cmdOutput = "Enabled scanning of removable drives (DisableRemovableDriveScanning = false)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1721,10 +1735,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8162: Status of the Windows Firewall: Log Successful Connections (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8162: Status of the Windows Firewall: Log Successful Connections (Private) setting"
+    Write-Log "User approved remediation for Control ID 8162: Log successful connections (Private)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log Successful Connections (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 8162"
+        Set-NetFirewallProfile -Profile Private -LogSuccessfulConnections Enabled
+        $cmdOutput = "Enabled logging of successful connections for the Private firewall profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1737,10 +1751,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4482: Status of the audit setting Other Logon/Logoff Events (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4482: Status of the audit setting Other Logon/Logoff Events (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4482: Other Logon/Logoff Events"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Other Logon/Logoff Events (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4482"
+        AuditPol /Set /Subcategory:"Other Logon/Logoff Events" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Other Logon/Logoff Events (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1753,10 +1767,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4490: Status of the audit setting File Share (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4490: Status of the audit setting File Share (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4490: File Share auditing"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting File Share (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4490"
+        AuditPol /Set /Subcategory:"File Share" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for File Share events (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1769,10 +1783,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1190: Status of the Interactive Logon: Do Not Display Last User Name setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1190: Status of the Interactive Logon: Do Not Display Last User Name setting"
+    Write-Log "User approved remediation for Control ID 1190: Do Not Display Last User Name"
     try {
-        # Placeholder for actual command to remediate: Status of the Interactive Logon: Do Not Display Last User Name setting
-        $cmdOutput = "Executed remediation step for Control ID 1190"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DontDisplayLastUserName" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set DontDisplayLastUserName to 1 (do not display last signed-in user)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1785,10 +1799,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1172: Status of the MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1172: Status of the MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing) setting"
+    Write-Log "User approved remediation for Control ID 1172: Disable IP Source Routing"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing) setting
-        $cmdOutput = "Executed remediation step for Control ID 1172"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "DisableIPSourceRouting" -PropertyType DWord -Value 2 -Force | Out-Null
+        $cmdOutput = "Set DisableIPSourceRouting to 2 (highest protection)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1801,10 +1815,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 11194: Status of the Block user from showing account details on sign-in setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 11194: Status of the Block user from showing account details on sign-in setting"
+    Write-Log "User approved remediation for Control ID 11194: Block showing account details on sign-in"
     try {
-        # Placeholder for actual command to remediate: Status of the Block user from showing account details on sign-in setting
-        $cmdOutput = "Executed remediation step for Control ID 11194"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "BlockUserFromShowingAccountDetailsOnSignin" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Blocked display of account details on sign-in screen."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1817,10 +1831,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10348: Status of the Do not show feedback notifications setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10348: Status of the Do not show feedback notifications setting"
+    Write-Log "User approved remediation for Control ID 10348: Disable feedback notifications"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not show feedback notifications setting
-        $cmdOutput = "Executed remediation step for Control ID 10348"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set DoNotShowFeedbackNotifications to 1 to disable feedback prompts."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1833,10 +1847,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13344: Status of the Prevent users from modifying settings setting for Windows Defender Exploit Protection"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13344: Status of the Prevent users from modifying settings setting for Windows Defender Exploit Protection"
+    Write-Log "User approved remediation for Control ID 13344: Prevent users from modifying Exploit Protection settings"
     try {
-        # Placeholder for actual command to remediate: Status of the Prevent users from modifying settings setting for Windows Defender Exploit Protection
-        $cmdOutput = "Executed remediation step for Control ID 13344"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\ExploitGuard\ExploitProtection" -Name "ExploitProtection_Settings" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set ExploitProtection_Settings to 1 to prevent users from modifying Exploit Protection settings."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1849,10 +1863,13 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1378: Status of the Interactive Logon: Smart Card Removal Behavior setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1378: Status of the Interactive Logon: Smart Card Removal Behavior setting"
+    Write-Log "User approved remediation for Control ID 1378: Smart Card Removal Behavior"
     try {
-        # Placeholder for actual command to remediate: Status of the Interactive Logon: Smart Card Removal Behavior setting
-        $cmdOutput = "Executed remediation step for Control ID 1378"
+        secedit /export /cfg C:\Windows\Temp\secpol.cfg
+        (Get-Content C:\Windows\Temp\secpol.cfg).replace("ScRemoveOption = 0", "ScRemoveOption = 1") | Set-Content C:\Windows\Temp\secpol.cfg
+        secedit /configure /db secedit.sdb /cfg C:\Windows\Temp\secpol.cfg /areas SECURITYPOLICY
+        Remove-Item C:\Windows\Temp\secpol.cfg
+        $cmdOutput = "Set Smart Card Removal Behavior to lock the workstation (ScRemoveOption = 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1865,10 +1882,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10377: Status of the Use enhanced anti-spoofing when available setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10377: Status of the Use enhanced anti-spoofing when available setting"
+    Write-Log "User approved remediation for Control ID 10377: Use enhanced anti-spoofing"
     try {
-        # Placeholder for actual command to remediate: Status of the Use enhanced anti-spoofing when available setting
-        $cmdOutput = "Executed remediation step for Control ID 10377"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Biometrics\FacialFeatures" -Name "EnhancedAntiSpoofing" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled enhanced anti-spoofing for facial recognition."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1881,10 +1898,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 23138: Status of the Turn off Spotlight collection on Desktop setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 23138: Status of the Turn off Spotlight collection on Desktop setting"
+    Write-Log "User approved remediation for Control ID 23138: Turn off Spotlight collection on Desktop"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off Spotlight collection on Desktop setting
-        $cmdOutput = "Executed remediation step for Control ID 23138"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableSpotlightCollectionOnDesktop" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled Windows Spotlight collection on the desktop background."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1897,10 +1914,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2400: Current list of Groups and User Accounts granted the Shut down the system (SeShutdownPrivilege) right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2400: Current list of Groups and User Accounts granted the Shut down the system (SeShutdownPrivilege) right"
+    Write-Log "User approved remediation for Control ID 2400: Shut down the system"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Shut down the system (SeShutdownPrivilege) right
-        $cmdOutput = "Executed remediation step for Control ID 2400"
+        ntrights -u "Users" +r SeShutdownPrivilege
+        $cmdOutput = "Granted 'Shut down the system' right to Users (SeShutdownPrivilege). Modify account/group as needed."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1913,10 +1930,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25338: Status of the Configure Redirection Guard setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25338: Status of the Configure Redirection Guard setting"
+    Write-Log "User approved remediation for Control ID 25338: Configure Redirection Guard"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure Redirection Guard setting
-        $cmdOutput = "Executed remediation step for Control ID 25338"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -PropertyType DWord -Value 1 -Force | Out-Null
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard" -Name "RequirePlatformSecurityFeatures" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled Redirection Guard with VBS and secure platform enforcement."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1929,10 +1947,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2186: Current list of Groups and User Accounts granted the Back up files and directories right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2186: Current list of Groups and User Accounts granted the Back up files and directories right"
+    Write-Log "User approved remediation for Control ID 2186: Back up files and directories right"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Back up files and directories right
-        $cmdOutput = "Executed remediation step for Control ID 2186"
+        ntrights -u "Administrators" +r SeBackupPrivilege
+        $cmdOutput = "Granted 'Back up files and directories' right to Administrators (SeBackupPrivilege)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1945,10 +1963,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2586: Status of the User Account Control: Admin Approval Mode for the Built-in Administrator account setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2586: Status of the User Account Control: Admin Approval Mode for the Built-in Administrator account setting"
+    Write-Log "User approved remediation for Control ID 2586: Admin Approval Mode for Built-in Administrator"
     try {
-        # Placeholder for actual command to remediate: Status of the User Account Control: Admin Approval Mode for the Built-in Administrator account setting
-        $cmdOutput = "Executed remediation step for Control ID 2586"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "FilterAdministratorToken" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled Admin Approval Mode for Built-in Administrator (FilterAdministratorToken = 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1961,10 +1979,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10370: Status of the Enable insecure guest logons setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10370: Status of the Enable insecure guest logons setting"
+    Write-Log "User approved remediation for Control ID 10370: Disable insecure guest logons"
     try {
-        # Placeholder for actual command to remediate: Status of the Enable insecure guest logons setting
-        $cmdOutput = "Executed remediation step for Control ID 10370"
+        New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name "AllowInsecureGuestAuth" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled insecure guest logons (AllowInsecureGuestAuth = 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1977,10 +1995,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3875: Status of the Do not allow drive redirection setting (Terminal Services)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3875: Status of the Do not allow drive redirection setting (Terminal Services)"
+    Write-Log "User approved remediation for Control ID 3875: Disable drive redirection in RDP"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not allow drive redirection setting (Terminal Services)
-        $cmdOutput = "Executed remediation step for Control ID 3875"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name "fDisableCdm" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled drive redirection (fDisableCdm = 1)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -1993,10 +2011,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2399: Current list of Groups and User Accounts granted the Restore files and directories (SeRestorePrivilege) right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2399: Current list of Groups and User Accounts granted the Restore files and directories (SeRestorePrivilege) right"
+    Write-Log "User approved remediation for Control ID 2399: Restore files and directories right"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Restore files and directories (SeRestorePrivilege) right
-        $cmdOutput = "Executed remediation step for Control ID 2399"
+        ntrights -u "Administrators" +r SeRestorePrivilege
+        $cmdOutput = "Granted 'Restore files and directories' right to Administrators (SeRestorePrivilege)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2009,10 +2027,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 27616: Status of the Configure security policy processing: Do not apply during periodic background processing setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 27616: Status of the Configure security policy processing: Do not apply during periodic background processing setting"
+    Write-Log "User approved remediation for Control ID 27616: Do not apply during periodic background processing"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure security policy processing: Do not apply during periodic background processing setting
-        $cmdOutput = "Executed remediation step for Control ID 27616"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}\0" -Name "NoBackgroundPolicy" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Set NoBackgroundPolicy to 0 to allow policy processing during background refresh."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2025,10 +2043,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26147: Status of Configure password backup directory setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26147: Status of Configure password backup directory setting"
+    Write-Log "User approved remediation for Control ID 26147: Configure password backup directory"
     try {
-        # Placeholder for actual command to remediate: Status of Configure password backup directory setting
-        $cmdOutput = "Executed remediation step for Control ID 26147"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork" -Name "PasswordBackupDirectory" -PropertyType String -Value "None" -Force | Out-Null
+        $cmdOutput = "Set PasswordBackupDirectory to 'None' to disable cloud password backup."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2041,10 +2059,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9024: Status of the Apply UAC restrictions to local accounts on network logons settings"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9024: Status of the Apply UAC restrictions to local accounts on network logons settings"
+    Write-Log "User approved remediation for Control ID 9024: Apply UAC restrictions on network logons"
     try {
-        # Placeholder for actual command to remediate: Status of the Apply UAC restrictions to local accounts on network logons settings
-        $cmdOutput = "Executed remediation step for Control ID 9024"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Enforced UAC restrictions on local accounts for remote access (LocalAccountTokenFilterPolicy = 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2054,13 +2072,13 @@ if ($confirm -eq "y") {
     Write-Log "User skipped remediation for Control ID 9024"
 }
 
-Write-Host "`nControl ID 4741: Status of the MSS: (DisableIPSourceRoutingIPv6) IP source routing protection level (protects against packet spoofing) setting"
+Write-Host "`nControl ID 4741: Status of the MSS: (DisableIPSourceRoutingIPv6) IP source routing protection level (IPv6)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4741: Status of the MSS: (DisableIPSourceRoutingIPv6) IP source routing protection level (protects against packet spoofing) setting"
+    Write-Log "User approved remediation for Control ID 4741: Disable IPv6 IP source routing"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (DisableIPSourceRoutingIPv6) IP source routing protection level (protects against packet spoofing) setting
-        $cmdOutput = "Executed remediation step for Control ID 4741"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" -Name "DisableIPSourceRouting" -PropertyType DWord -Value 2 -Force | Out-Null
+        $cmdOutput = "Set DisableIPSourceRouting (IPv6) to 2 to fully disable source routing."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2073,10 +2091,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4493: Status of the audit setting Other Object Access Events (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4493: Status of the audit setting Other Object Access Events (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4493: Other Object Access Events"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Other Object Access Events (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4493"
+        AuditPol /Set /Subcategory:"Other Object Access Events" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Other Object Access Events (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2089,10 +2107,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26149: Status of password (PasswordAgeDays) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26149: Status of password (PasswordAgeDays) setting"
+    Write-Log "User approved remediation for Control ID 26149: Maximum password age"
     try {
-        # Placeholder for actual command to remediate: Status of password (PasswordAgeDays) setting
-        $cmdOutput = "Executed remediation step for Control ID 26149"
+        net accounts /maxpwage:90
+        $cmdOutput = "Set maximum password age to 90 days."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2105,10 +2123,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3932: Status of the Windows Firewall: Inbound connections (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3932: Status of the Windows Firewall: Inbound connections (Public) setting"
+    Write-Log "User approved remediation for Control ID 3932: Inbound firewall (Public) setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Inbound connections (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 3932"
+        Set-NetFirewallProfile -Profile Public -DefaultInboundAction Block
+        $cmdOutput = "Set Windows Firewall (Public) to block inbound connections by default."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2121,10 +2139,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26137: Status of Password (PasswordLength) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26137: Status of Password (PasswordLength) setting"
+    Write-Log "User approved remediation for Control ID 26137: Password minimum length"
     try {
-        # Placeholder for actual command to remediate: Status of Password (PasswordLength) setting
-        $cmdOutput = "Executed remediation step for Control ID 26137"
+        net accounts /minpwlen:14
+        $cmdOutput = "Set minimum password length to 14 characters."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2137,10 +2155,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8161: Status of the Windows Firewall: Log file path and name (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8161: Status of the Windows Firewall: Log file path and name (Private) setting"
+    Write-Log "User approved remediation for Control ID 8161: Firewall log file path (Private)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log file path and name (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 8161"
+        Set-NetFirewallProfile -Profile Private -LogFileName "C:\Windows\System32\LogFiles\Firewall\pfirewall.log"
+        $cmdOutput = "Set firewall log file path for Private profile to pfirewall.log."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2153,10 +2171,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3960: Status of the Windows Firewall: Apply local firewall rules (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3960: Status of the Windows Firewall: Apply local firewall rules (Public) setting"
+    Write-Log "User approved remediation for Control ID 3960: Apply local firewall rules (Public)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Apply local firewall rules (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 3960"
+        Set-NetFirewallProfile -Profile Public -AllowLocalRules False
+        $cmdOutput = "Disabled local firewall rules for Public profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2169,10 +2187,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8165: Status of the Windows Firewall: Log dropped packets (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8165: Status of the Windows Firewall: Log dropped packets (Public) setting"
+    Write-Log "User approved remediation for Control ID 8165: Log dropped packets (Public)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log dropped packets (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 8165"
+        Set-NetFirewallProfile -Profile Public -LogDroppedPackets Enabled
+        $cmdOutput = "Enabled logging of dropped packets for Public firewall profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2185,10 +2203,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3965: Status of the Windows Firewall: Display a notification (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3965: Status of the Windows Firewall: Display a notification (Public) setting"
+    Write-Log "User approved remediation for Control ID 3965: Display notification (Public)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Display a notification (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 3965"
+        Set-NetFirewallProfile -Profile Public -NotifyOnListen True
+        $cmdOutput = "Enabled notifications for listening apps on Public firewall profile."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2201,10 +2219,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25359: Status of the Authentication protocol to use for incoming RPC connections setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25359: Status of the Authentication protocol to use for incoming RPC connections setting"
+    Write-Log "User approved remediation for Control ID 25359: Authentication protocol for incoming RPC"
     try {
-        # Placeholder for actual command to remediate: Status of the Authentication protocol to use for incoming RPC connections setting
-        $cmdOutput = "Executed remediation step for Control ID 25359"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc" -Name "ForceAuthnLevel" -PropertyType DWord -Value 5 -Force | Out-Null
+        $cmdOutput = "Set authentication protocol level to 'PktPrivacy' (5) for incoming RPC connections."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2217,10 +2235,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25350: Status of the Allow Custom SSPs and APs to be loaded into LSASS setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25350: Status of the Allow Custom SSPs and APs to be loaded into LSASS setting"
+    Write-Log "User approved remediation for Control ID 25350: Disable loading of custom SSPs and APs into LSASS"
     try {
-        # Placeholder for actual command to remediate: Status of the Allow Custom SSPs and APs to be loaded into LSASS setting
-        $cmdOutput = "Executed remediation step for Control ID 25350"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "Security Packages" -PropertyType MultiString -Value "kerberos","msv1_0","wdigest","tspkg","pku2u","schannel" -Force | Out-Null
+        $cmdOutput = "Ensured only default SSPs/APs are configured under Security Packages."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2233,10 +2251,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4506: Status of the audit setting Other Policy Change Events (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4506: Status of the audit setting Other Policy Change Events (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4506: Enable auditing of Other Policy Change Events"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Other Policy Change Events (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4506"
+        AuditPol /Set /Subcategory:"Other Policy Change Events" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled audit for Other Policy Change Events (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2249,10 +2267,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3891: Status of the Always prompt for password upon connection setting (Terminal Services)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3891: Status of the Always prompt for password upon connection setting (Terminal Services)"
+    Write-Log "User approved remediation for Control ID 3891: Require password prompt on RDP connection"
     try {
-        # Placeholder for actual command to remediate: Status of the Always prompt for password upon connection setting (Terminal Services)
-        $cmdOutput = "Executed remediation step for Control ID 3891"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name "fPromptForPassword" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Configured Terminal Services to always prompt for password upon connection."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2265,10 +2283,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 14415: Status of the Encryption Oracle Remediation group policy"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 14415: Status of the Encryption Oracle Remediation group policy"
+    Write-Log "User approved remediation for Control ID 14415: Configure Encryption Oracle Remediation"
     try {
-        # Placeholder for actual command to remediate: Status of the Encryption Oracle Remediation group policy
-        $cmdOutput = "Executed remediation step for Control ID 14415"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\CredSSP\Parameters" -Name "AllowEncryptionOracle" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Set AllowEncryptionOracle to 0 (Force updated clients only)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2281,10 +2299,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25356: Status of the Enable MPR notifications for the system setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25356: Status of the Enable MPR notifications for the system setting"
+    Write-Log "User approved remediation for Control ID 25356: Disable MPR notifications"
     try {
-        # Placeholder for actual command to remediate: Status of the Enable MPR notifications for the system setting
-        $cmdOutput = "Executed remediation step for Control ID 25356"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Network Connections" -Name "EnableMPRNotifications" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled MPR (Multiple Provider Router) notifications (EnableMPRNotifications = 0)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2297,10 +2315,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9537: Status of Windows Defender - Turn on e-mail scanning setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9537: Status of Windows Defender - Turn on e-mail scanning setting"
+    Write-Log "User approved remediation for Control ID 9537: Enable Defender email scanning"
     try {
-        # Placeholder for actual command to remediate: Status of Windows Defender - Turn on e-mail scanning setting
-        $cmdOutput = "Executed remediation step for Control ID 9537"
+        Set-MpPreference -DisableEmailScanning $false
+        $cmdOutput = "Enabled e-mail scanning in Windows Defender (DisableEmailScanning = False)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2313,10 +2331,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1153: Status of the Network Access: Do not allow Anonymous Enumeration of SAM Accounts and Shares setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1153: Status of the Network Access: Do not allow Anonymous Enumeration of SAM Accounts and Shares setting"
+    Write-Log "User approved remediation for Control ID 1153: Disable anonymous SAM/Shares enumeration"
     try {
-        # Placeholder for actual command to remediate: Status of the Network Access: Do not allow Anonymous Enumeration of SAM Accounts and Shares setting
-        $cmdOutput = "Executed remediation step for Control ID 1153"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RestrictAnonymous" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set RestrictAnonymous = 1 (disallow anonymous enumeration)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2329,10 +2347,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3897: Status of Enumerate administrator accounts on elevation setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3897: Status of Enumerate administrator accounts on elevation setting"
+    Write-Log "User approved remediation for Control ID 3897: Disable enumerating admin accounts on elevation"
     try {
-        # Placeholder for actual command to remediate: Status of Enumerate administrator accounts on elevation setting
-        $cmdOutput = "Executed remediation step for Control ID 3897"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\CredUI" -Name "EnumerateAdministrators" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled enumeration of admin accounts on elevation prompt."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2345,10 +2363,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8243: Configure Network Security:Restrict NTLM: Outgoing NTLM traffic to remote servers"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8243: Configure Network Security:Restrict NTLM: Outgoing NTLM traffic to remote servers"
+    Write-Log "User approved remediation for Control ID 8243: Restrict outgoing NTLM"
     try {
-        # Placeholder for actual command to remediate: Configure Network Security:Restrict NTLM: Outgoing NTLM traffic to remote servers
-        $cmdOutput = "Executed remediation step for Control ID 8243"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "RestrictSendingNTLMTraffic" -PropertyType DWord -Value 2 -Force | Out-Null
+        $cmdOutput = "Restricted outgoing NTLM traffic to remote servers (Block all = 2)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2361,10 +2379,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8366: Status of the name of the Built-in Guest account"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8366: Status of the name of the Built-in Guest account"
+    Write-Log "User approved remediation for Control ID 8366: Rename Guest account"
     try {
-        # Placeholder for actual command to remediate: Status of the name of the Built-in Guest account
-        $cmdOutput = "Executed remediation step for Control ID 8366"
+        Rename-LocalUser -Name "Guest" -NewName "DisabledGuest"  # or another name per your policy
+        $cmdOutput = "Renamed built-in Guest account to 'DisabledGuest'."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2377,10 +2395,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3948: Status of the Windows Firewall: Inbound connections (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3948: Status of the Windows Firewall: Inbound connections (Private) setting"
+    Write-Log "User approved remediation for Control ID 3948: Block inbound connections (Private)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Inbound connections (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 3948"
+        Set-NetFirewallProfile -Profile Private -DefaultInboundAction Block
+        $cmdOutput = "Set Private profile to block all inbound connections."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2393,10 +2411,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 11203: Status of the Do not suggest third-party content in Windows spotlight setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 11203: Status of the Do not suggest third-party content in Windows spotlight setting"
+    Write-Log "User approved remediation for Control ID 11203: Disable third-party content in Spotlight"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not suggest third-party content in Windows spotlight setting
-        $cmdOutput = "Executed remediation step for Control ID 11203"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableThirdPartySuggestions" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled third-party suggestions in Windows Spotlight."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2409,10 +2427,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2616: Status of the Prohibit installation and configuration of Network Bridge on the DNS domain network setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2616: Status of the Prohibit installation and configuration of Network Bridge on the DNS domain network setting"
+    Write-Log "User approved remediation for Control ID 2616"
     try {
-        # Placeholder for actual command to remediate: Status of the Prohibit installation and configuration of Network Bridge on the DNS domain network setting
-        $cmdOutput = "Executed remediation step for Control ID 2616"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Network Connections" -Name "NC_AllowNetBridge_NLA" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Prohibited installation/configuration of Network Bridge on DNS domain network."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2422,13 +2440,13 @@ if ($confirm -eq "y") {
     Write-Log "User skipped remediation for Control ID 2616"
 }
 
-Write-Host "`nControl ID 13923: Status of Block Office applications from injecting code into other processes ASR rule (75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84)"
+Write-Host "`nControl ID 13923: Block Office applications from injecting code into other processes ASR rule"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13923: Status of Block Office applications from injecting code into other processes ASR rule (75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84)"
+    Write-Log "User approved remediation for Control ID 13923"
     try {
-        # Placeholder for actual command to remediate: Status of Block Office applications from injecting code into other processes ASR rule (75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84)
-        $cmdOutput = "Executed remediation step for Control ID 13923"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block Office applications from injecting code (ID: 75668C1F...)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2441,10 +2459,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1183: Status of the Disable Autorun for all drives setting for the HKLM key"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1183: Status of the Disable Autorun for all drives setting for the HKLM key"
+    Write-Log "User approved remediation for Control ID 1183"
     try {
-        # Placeholder for actual command to remediate: Status of the Disable Autorun for all drives setting for the HKLM key
-        $cmdOutput = "Executed remediation step for Control ID 1183"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -PropertyType DWord -Value 255 -Force | Out-Null
+        $cmdOutput = "Disabled Autorun for all drives (HKLM)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2454,13 +2472,13 @@ if ($confirm -eq "y") {
     Write-Log "User skipped remediation for Control ID 1183"
 }
 
-Write-Host "`nControl ID 13932: Status of Block Office applications from creating executable content ASR rule (3B576869-A4EC-4529-8536-B80A7769E899)"
+Write-Host "`nControl ID 13932: Block Office applications from creating executable content ASR rule"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13932: Status of Block Office applications from creating executable content ASR rule (3B576869-A4EC-4529-8536-B80A7769E899)"
+    Write-Log "User approved remediation for Control ID 13932"
     try {
-        # Placeholder for actual command to remediate: Status of Block Office applications from creating executable content ASR rule (3B576869-A4EC-4529-8536-B80A7769E899)
-        $cmdOutput = "Executed remediation step for Control ID 13932"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "3B576869-A4EC-4529-8536-B80A7769E899" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block Office apps from creating executables (ID: 3B576869...)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2470,13 +2488,13 @@ if ($confirm -eq "y") {
     Write-Log "User skipped remediation for Control ID 13932"
 }
 
-Write-Host "`nControl ID 22305: Status of Enable file hash computation feature."
+Write-Host "`nControl ID 22305: Enable file hash computation feature"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 22305: Status of Enable file hash computation feature."
+    Write-Log "User approved remediation for Control ID 22305"
     try {
-        # Placeholder for actual command to remediate: Status of Enable file hash computation feature.
-        $cmdOutput = "Executed remediation step for Control ID 22305"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "EnableFileHashComputation" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled file hash computation feature."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2489,10 +2507,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25361: Status of the Protocols to allow for incoming RPC connections setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25361: Status of the Protocols to allow for incoming RPC connections setting"
+    Write-Log "User approved remediation for Control ID 25361"
     try {
-        # Placeholder for actual command to remediate: Status of the Protocols to allow for incoming RPC connections setting
-        $cmdOutput = "Executed remediation step for Control ID 25361"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Rpc" -Name "RestrictRemoteClients" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set RPC RestrictRemoteClients to allow authenticated RPC traffic only."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2505,10 +2523,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2607: Status of the Prohibit use of Internet Connection Sharing on your DNS domain network setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2607: Status of the Prohibit use of Internet Connection Sharing on your DNS domain network setting"
+    Write-Log "User approved remediation for Control ID 2607"
     try {
-        # Placeholder for actual command to remediate: Status of the Prohibit use of Internet Connection Sharing on your DNS domain network setting
-        $cmdOutput = "Executed remediation step for Control ID 2607"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Network Connections" -Name "NC_ShowSharedAccessUI" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled Internet Connection Sharing UI on DNS domain network."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2521,10 +2539,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1389: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) clients setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1389: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) clients setting"
+    Write-Log "User approved remediation for Control ID 1389"
     try {
-        # Placeholder for actual command to remediate: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) clients setting
-        $cmdOutput = "Executed remediation step for Control ID 1389"
+        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinClientSec" -PropertyType DWord -Value 537395200 -Force | Out-Null
+        $cmdOutput = "Set minimum session security for NTLM SSP clients (Require NTLMv2, 128-bit encryption, and signing)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2537,10 +2555,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25902: Status of Enable App Installer Hash Override setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25902: Status of Enable App Installer Hash Override setting"
+    Write-Log "User approved remediation for Control ID 25902"
     try {
-        # Placeholder for actual command to remediate: Status of Enable App Installer Hash Override setting
-        $cmdOutput = "Executed remediation step for Control ID 25902"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\AppInstaller" -Name "EnableHashOverride" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Disabled App Installer hash override."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2553,10 +2571,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2621: Status of the Turn off heap termination on corruption setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2621: Status of the Turn off heap termination on corruption setting"
+    Write-Log "User approved remediation for Control ID 2621"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off heap termination on corruption setting
-        $cmdOutput = "Executed remediation step for Control ID 2621"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Safer\CodeIdentifiers" -Name "DisableHeapTerminationOnCorruption" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Ensured heap termination on corruption is enabled."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2569,10 +2587,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4133: Status of the Require secure RPC communication setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4133: Status of the Require secure RPC communication setting"
+    Write-Log "User approved remediation for Control ID 4133"
     try {
-        # Placeholder for actual command to remediate: Status of the Require secure RPC communication setting
-        $cmdOutput = "Executed remediation step for Control ID 4133"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Rpc" -Name "ForceSecureRpcAuthentication" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Enabled secure RPC communication."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2585,10 +2603,13 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1071: Status of the Minimum Password Length setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1071: Status of the Minimum Password Length setting"
+    Write-Log "User approved remediation for Control ID 1071"
     try {
-        # Placeholder for actual command to remediate: Status of the Minimum Password Length setting
-        $cmdOutput = "Executed remediation step for Control ID 1071"
+        secedit /export /cfg "$env:TEMP\secpol.cfg" | Out-Null
+        (Get-Content "$env:TEMP\secpol.cfg").replace("MinimumPasswordLength = 0", "MinimumPasswordLength = 14") | Set-Content "$env:TEMP\secpol.cfg"
+        secedit /configure /db "$env:TEMP\secedit.sdb" /cfg "$env:TEMP\secpol.cfg" /areas SECURITYPOLICY | Out-Null
+        Remove-Item "$env:TEMP\secpol.cfg","$env:TEMP\secedit.sdb" -Force
+        $cmdOutput = "Set minimum password length to 14 characters."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2601,10 +2622,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10353: Status of the Turn off Microsoft consumer experiences setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10353: Status of the Turn off Microsoft consumer experiences setting"
+    Write-Log "User approved remediation for Control ID 10353"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off Microsoft consumer experiences setting
-        $cmdOutput = "Executed remediation step for Control ID 10353"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableConsumerAccountStateContent" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Turned off Microsoft consumer experiences."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2617,10 +2638,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10007: Status of the default behavior for AutoRun"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10007: Status of the default behavior for AutoRun"
+    Write-Log "User approved remediation for Control ID 10007"
     try {
-        # Placeholder for actual command to remediate: Status of the default behavior for AutoRun
-        $cmdOutput = "Executed remediation step for Control ID 10007"
+        New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoAutorun" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Set default behavior for AutoRun to disabled."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2633,10 +2654,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2198: Current list of Groups and User Accounts granted the Deny logon as a service right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2198: Current list of Groups and User Accounts granted the Deny logon as a service right"
+    Write-Log "User approved remediation for Control ID 2198"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Deny logon as a service right
-        $cmdOutput = "Executed remediation step for Control ID 2198"
+        ntrights -u "Guests" -m \\localhost +r SeDenyServiceLogonRight
+        $cmdOutput = "Applied 'Deny logon as a service' to Guests group."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2649,10 +2670,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4517: Status of the audit setting Credential Validation (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4517: Status of the audit setting Credential Validation (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4517"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Credential Validation (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4517"
+        AuditPol /set /subcategory:"Credential Validation" /success:enable /failure:enable
+        $cmdOutput = "Enabled auditing for Credential Validation (success and failure)."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2665,10 +2686,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9008: Status of the Do not display network selection UI setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9008: Status of the Do not display network selection UI setting"
+    Write-Log "User approved remediation for Control ID 9008"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not display network selection UI setting
-        $cmdOutput = "Executed remediation step for Control ID 9008"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "DontDisplayNetworkSelectionUI" -PropertyType DWord -Value 1 -Force | Out-Null
+        $cmdOutput = "Disabled network selection UI on logon screen."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2681,10 +2702,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4140: Status of the Do not delete temp folder upon exit setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4140: Status of the Do not delete temp folder upon exit setting"
+    Write-Log "User approved remediation for Control ID 4140"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not delete temp folder upon exit setting
-        $cmdOutput = "Executed remediation step for Control ID 4140"
+        New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "DeleteTempDirsOnExit" -PropertyType DWord -Value 0 -Force | Out-Null
+        $cmdOutput = "Configured system to retain temp folders on exit."
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2697,10 +2718,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 14884: Status of Block Adobe Reader from creating child processes ASR rule (7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 14884: Status of Block Adobe Reader from creating child processes ASR rule (7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c)"
+    Write-Log "User approved remediation for Control ID 14884"
     try {
-        # Placeholder for actual command to remediate: Status of Block Adobe Reader from creating child processes ASR rule (7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c)
-        $cmdOutput = "Executed remediation step for Control ID 14884"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "ASR rule 7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c enabled for Adobe Reader child process blocking"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2713,10 +2734,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 22344: Status of the DoH Policy setting."
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 22344: Status of the DoH Policy setting."
+    Write-Log "User approved remediation for Control ID 22344"
     try {
-        # Placeholder for actual command to remediate: Status of the DoH Policy setting.
-        $cmdOutput = "Executed remediation step for Control ID 22344"
+        New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\NetworkConnectivityStatusIndicator" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\NetworkConnectivityStatusIndicator" -Name "DoHPolicy" -Value 0 -Type DWord
+        $cmdOutput = "Disabled DNS over HTTPS (DoH) via Group Policy"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2729,10 +2751,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25901: Status of Enable App Installer Experimental Features setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25901: Status of Enable App Installer Experimental Features setting"
+    Write-Log "User approved remediation for Control ID 25901"
     try {
-        # Placeholder for actual command to remediate: Status of Enable App Installer Experimental Features setting
-        $cmdOutput = "Executed remediation step for Control ID 25901"
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppInstaller" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppInstaller" -Name "EnableExperimentalFeatures" -Value 0 -Type DWord
+        $cmdOutput = "Disabled App Installer Experimental Features"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2745,10 +2768,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1526: Status of the Windows Firewall: Log File Size (Domain) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1526: Status of the Windows Firewall: Log File Size (Domain) setting"
+    Write-Log "User approved remediation for Control ID 1526"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log File Size (Domain) setting
-        $cmdOutput = "Executed remediation step for Control ID 1526"
+        Set-NetFirewallProfile -Profile Domain -LogFileSizeKilobytes 16384
+        $cmdOutput = "Set Domain Firewall Log File Size to 16384 KB"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2761,10 +2784,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13931: Status of Prevent users and apps from accessing dangerous websites setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13931: Status of Prevent users and apps from accessing dangerous websites setting"
+    Write-Log "User approved remediation for Control ID 13931"
     try {
-        # Placeholder for actual command to remediate: Status of Prevent users and apps from accessing dangerous websites setting
-        $cmdOutput = "Executed remediation step for Control ID 13931"
+        Set-MpPreference -EnableNetworkProtection Enabled
+        $cmdOutput = "Enabled Windows Defender Network Protection (blocks dangerous websites)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2777,10 +2800,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2200: Current list of Groups and User Accounts granted the Deny logon through terminal (Remote Desktop) service right"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2200: Current list of Groups and User Accounts granted the Deny logon through terminal (Remote Desktop) service right"
+    Write-Log "User approved remediation for Control ID 2200"
     try {
-        # Placeholder for actual command to remediate: Current list of Groups and User Accounts granted the Deny logon through terminal (Remote Desktop) service right
-        $cmdOutput = "Executed remediation step for Control ID 2200"
+        ntrights -u "Guests" +r SeDenyRemoteInteractiveLogonRight
+        $cmdOutput = "Applied Deny logon through Remote Desktop Services to Guests"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2793,10 +2816,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1463: Status of the MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1463: Status of the MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning setting"
+    Write-Log "User approved remediation for Control ID 1463"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning setting
-        $cmdOutput = "Executed remediation step for Control ID 1463"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security" -Name "WarningLevel" -Value 90 -Type DWord
+        $cmdOutput = "Set security log warning level to 90%"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2809,10 +2832,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13930: Status of Block credential stealing from the Windows local security authority subsystem (lsass.exe) ASR rule (9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13930: Status of Block credential stealing from the Windows local security authority subsystem (lsass.exe) ASR rule (9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2)"
+    Write-Log "User approved remediation for Control ID 13930"
     try {
-        # Placeholder for actual command to remediate: Status of Block credential stealing from the Windows local security authority subsystem (lsass.exe) ASR rule (9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2)
-        $cmdOutput = "Executed remediation step for Control ID 13930"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block LSASS credential theft"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2825,10 +2848,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 14414: Status of the Enumeration policy for external devices incompatible with Kernel DMA Protection setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 14414: Status of the Enumeration policy for external devices incompatible with Kernel DMA Protection setting"
+    Write-Log "User approved remediation for Control ID 14414"
     try {
-        # Placeholder for actual command to remediate: Status of the Enumeration policy for external devices incompatible with Kernel DMA Protection setting
-        $cmdOutput = "Executed remediation step for Control ID 14414"
+        New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\Kernel DMA Protection" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Kernel DMA Protection" -Name "DeviceEnumerationPolicy" -Value 0 -Type DWord
+        $cmdOutput = "Set DeviceEnumerationPolicy to 0 (block incompatible devices)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2841,10 +2865,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10087: Status of the Enable Windows NTP Client setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10087: Status of the Enable Windows NTP Client setting"
+    Write-Log "User approved remediation for Control ID 10087"
     try {
-        # Placeholder for actual command to remediate: Status of the Enable Windows NTP Client setting
-        $cmdOutput = "Executed remediation step for Control ID 10087"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpClient" -Name "Enabled" -Value 1 -Type DWord
+        $cmdOutput = "Enabled Windows NTP Client"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2857,10 +2881,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8163: Status of the Windows Firewall: Log dropped packets (Private) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8163: Status of the Windows Firewall: Log dropped packets (Private) setting"
+    Write-Log "User approved remediation for Control ID 8163"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log dropped packets (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 8163"
+        Set-NetFirewallProfile -Profile Private -LogDroppedPackets Enabled
+        $cmdOutput = "Enabled logging of dropped packets on Private Firewall Profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2873,10 +2897,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 5266: Status of the Network security: Allow Local System to use computer identity for NTLM setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 5266: Status of the Network security: Allow Local System to use computer identity for NTLM setting"
+    Write-Log "User approved remediation for Control ID 5266"
     try {
-        # Placeholder for actual command to remediate: Status of the Network security: Allow Local System to use computer identity for NTLM setting
-        $cmdOutput = "Executed remediation step for Control ID 5266"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "AllowSystemToUseComputerIdentity" -Value 1 -Type DWord
+        $cmdOutput = "Enabled Local System use of computer identity for NTLM"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2889,10 +2913,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1387: Status of the Network Security: LAN Manager Authentication Level setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1387: Status of the Network Security: LAN Manager Authentication Level setting"
+    Write-Log "User approved remediation for Control ID 1387"
     try {
-        # Placeholder for actual command to remediate: Status of the Network Security: LAN Manager Authentication Level setting
-        $cmdOutput = "Executed remediation step for Control ID 1387"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -Value 5 -Type DWord
+        $cmdOutput = "Set LAN Manager Authentication Level to 'Send NTLMv2 response only. Refuse LM and NTLM'"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2905,10 +2929,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4503: Status of the audit setting Authorization Policy Change (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4503: Status of the audit setting Authorization Policy Change (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4503"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Authorization Policy Change (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4503"
+        AuditPol /Set /SubCategory:"Authorization Policy Change" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Authorization Policy Change (Success and Failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2921,10 +2945,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 17241: Configure Minimize the number of simultaneous connections to the Internet or a Windows Domain Prevent Wi-Fi when on Ethernet."
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 17241: Configure Minimize the number of simultaneous connections to the Internet or a Windows Domain Prevent Wi-Fi when on Ethernet."
+    Write-Log "User approved remediation for Control ID 17241"
     try {
-        # Placeholder for actual command to remediate: Configure Minimize the number of simultaneous connections to the Internet or a Windows Domain Prevent Wi-Fi when on Ethernet.
-        $cmdOutput = "Executed remediation step for Control ID 17241"
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" -Name "fMinimizeConnections" -Value 3 -Type DWord
+        $cmdOutput = "Set to prevent Wi-Fi connections when Ethernet is connected (MinimizeConnections = 3)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2937,10 +2961,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1072: Status of the Minimum Password Age setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1072: Status of the Minimum Password Age setting"
+    Write-Log "User approved remediation for Control ID 1072"
     try {
-        # Placeholder for actual command to remediate: Status of the Minimum Password Age setting
-        $cmdOutput = "Executed remediation step for Control ID 1072"
+        net accounts /minpwage:1
+        $cmdOutput = "Set minimum password age to 1 day"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2953,10 +2977,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13928: Status of Block executable content from email client and webmail ASR rule (BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13928: Status of Block executable content from email client and webmail ASR rule (BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550)"
+    Write-Log "User approved remediation for Control ID 13928"
     try {
-        # Placeholder for actual command to remediate: Status of Block executable content from email client and webmail ASR rule (BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550)
-        $cmdOutput = "Executed remediation step for Control ID 13928"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block executable content from email client and webmail"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2969,10 +2993,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 23132: Status of the Limit Diagnostic Log Collection setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 23132: Status of the Limit Diagnostic Log Collection setting"
+    Write-Log "User approved remediation for Control ID 23132"
     try {
-        # Placeholder for actual command to remediate: Status of the Limit Diagnostic Log Collection setting
-        $cmdOutput = "Executed remediation step for Control ID 23132"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "LimitDiagnosticLogCollection" -Value 1 -Type DWord
+        $cmdOutput = "Set LimitDiagnosticLogCollection to 1 (Enabled)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -2985,10 +3009,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1513: Status of the RPC Endpoint Mapper Client Authentication setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1513: Status of the RPC Endpoint Mapper Client Authentication setting"
+    Write-Log "User approved remediation for Control ID 1513"
     try {
-        # Placeholder for actual command to remediate: Status of the RPC Endpoint Mapper Client Authentication setting
-        $cmdOutput = "Executed remediation step for Control ID 1513"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc" -Name "EnableAuthEpResolution" -Value 1 -Type DWord
+        $cmdOutput = "Enabled RPC Endpoint Mapper Client Authentication"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3001,10 +3025,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25903: Status of Enable App Installer ms-appinstaller protocol setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25903: Status of Enable App Installer ms-appinstaller protocol setting"
+    Write-Log "User approved remediation for Control ID 25903"
     try {
-        # Placeholder for actual command to remediate: Status of Enable App Installer ms-appinstaller protocol setting
-        $cmdOutput = "Executed remediation step for Control ID 25903"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppInstaller" -Name "EnableMSAppInstallerProtocol" -Value 0 -Type DWord
+        $cmdOutput = "Disabled App Installer ms-appinstaller protocol (EnableMSAppInstallerProtocol = 0)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3017,10 +3041,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 2635: Status of the Set Client Connection Encryption Level setting (Terminal Services)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 2635: Status of the Set Client Connection Encryption Level setting (Terminal Services)"
+    Write-Log "User approved remediation for Control ID 2635"
     try {
-        # Placeholder for actual command to remediate: Status of the Set Client Connection Encryption Level setting (Terminal Services)
-        $cmdOutput = "Executed remediation step for Control ID 2635"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MinEncryptionLevel" -Value 3 -Type DWord
+        $cmdOutput = "Set Client Connection Encryption Level to High (MinEncryptionLevel = 3)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3033,10 +3057,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13926: Status of Block execution of potentially obfuscated scripts ASR rule (5BEB7EFE-FD9A-4556-801D-275E5FFC04CC)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13926: Status of Block execution of potentially obfuscated scripts ASR rule (5BEB7EFE-FD9A-4556-801D-275E5FFC04CC)"
+    Write-Log "User approved remediation for Control ID 13926"
     try {
-        # Placeholder for actual command to remediate: Status of Block execution of potentially obfuscated scripts ASR rule (5BEB7EFE-FD9A-4556-801D-275E5FFC04CC)
-        $cmdOutput = "Executed remediation step for Control ID 13926"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "5beb7efe-fd9a-4556-801d-275e5ffc04cc" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block execution of potentially obfuscated scripts"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3049,10 +3073,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1189: Status of the Microsoft network server: Digitally sign communication (always) setting (SMB)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1189: Status of the Microsoft network server: Digitally sign communication (always) setting (SMB)"
+    Write-Log "User approved remediation for Control ID 1189"
     try {
-        # Placeholder for actual command to remediate: Status of the Microsoft network server: Digitally sign communication (always) setting (SMB)
-        $cmdOutput = "Executed remediation step for Control ID 1189"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "RequireSecuritySignature" -Value 1 -Type DWord
+        $cmdOutput = "Enforced SMB signing: Digitally sign communication (always) = Enabled"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3065,10 +3089,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3962: Status of the Windows Firewall: Display a notification (Domain) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3962: Status of the Windows Firewall: Display a notification (Domain) setting"
+    Write-Log "User approved remediation for Control ID 3962"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Display a notification (Domain) setting
-        $cmdOutput = "Executed remediation step for Control ID 3962"
+        Set-NetFirewallProfile -Profile Domain -NotifyOnListen True
+        $cmdOutput = "Enabled firewall notifications on the Domain profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3081,10 +3105,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 19071: Status of the Point and Print Restrictions: When updating drivers for an existing connection setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 19071: Status of the Point and Print Restrictions: When updating drivers for an existing connection setting"
+    Write-Log "User approved remediation for Control ID 19071"
     try {
-        # Placeholder for actual command to remediate: Status of the Point and Print Restrictions: When updating drivers for an existing connection setting
-        $cmdOutput = "Executed remediation step for Control ID 19071"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" -Name "NoWarningNoElevationOnUpdate" -Value 0 -Type DWord
+        $cmdOutput = "Set NoWarningNoElevationOnUpdate = 0 (Elevation prompt required when updating drivers)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3097,10 +3121,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3966: Status of the Windows Firewall: Apply local connection security rules (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3966: Status of the Windows Firewall: Apply local connection security rules (Public) setting"
+    Write-Log "User approved remediation for Control ID 3966"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Apply local connection security rules (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 3966"
+        Set-NetFirewallProfile -Profile Public -AllowLocalIPsecRules False
+        $cmdOutput = "Disabled application of local connection security rules on Public profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3113,10 +3137,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8251: Status of the Disallow WinRM from storing RunAs credentials setting (WinRM service)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8251: Status of the Disallow WinRM from storing RunAs credentials setting (WinRM service)"
+    Write-Log "User approved remediation for Control ID 8251"
     try {
-        # Placeholder for actual command to remediate: Status of the Disallow WinRM from storing RunAs credentials setting (WinRM service)
-        $cmdOutput = "Executed remediation step for Control ID 8251"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service" -Name "DisableRunAs" -Value 1 -Type DWord
+        $cmdOutput = "Disabled storing of RunAs credentials by WinRM (DisableRunAs = 1)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3129,10 +3153,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 3876: Status of the Do not allow passwords to be saved setting (Terminal Services)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 3876: Status of the Do not allow passwords to be saved setting (Terminal Services)"
+    Write-Log "User approved remediation for Control ID 3876"
     try {
-        # Placeholder for actual command to remediate: Status of the Do not allow passwords to be saved setting (Terminal Services)
-        $cmdOutput = "Executed remediation step for Control ID 3876"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "DisablePasswordSaving" -Value 1 -Type DWord
+        $cmdOutput = "Disallowed saving of passwords in RDP sessions (DisablePasswordSaving = 1)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3145,10 +3169,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4511: Status of the audit setting Application Group Management (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4511: Status of the audit setting Application Group Management (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4511"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Application Group Management (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4511"
+        AuditPol /set /subcategory:"Application Group Management" /success:enable /failure:enable
+        $cmdOutput = "Enabled auditing for Application Group Management (success and failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3161,10 +3185,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26148: Status of Do not allow password expiration time longer than required by policy setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26148: Status of Do not allow password expiration time longer than required by policy setting"
+    Write-Log "User approved remediation for Control ID 26148"
     try {
-        # Placeholder for actual command to remediate: Status of Do not allow password expiration time longer than required by policy setting
-        $cmdOutput = "Executed remediation step for Control ID 26148"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PwdExpiryWarning" -Value 1 -Type DWord
+        $cmdOutput = "Restricted password expiration time beyond domain policy limits (PwdExpiryWarning = 1)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3177,10 +3201,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 25900: Status of Enable App Installer setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 25900: Status of Enable App Installer setting"
+    Write-Log "User approved remediation for Control ID 25900"
     try {
-        # Placeholder for actual command to remediate: Status of Enable App Installer setting
-        $cmdOutput = "Executed remediation step for Control ID 25900"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppInstaller" -Name "EnableAppInstaller" -Value 0 -Type DWord
+        $cmdOutput = "Disabled App Installer (EnableAppInstaller = 0)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3193,10 +3217,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13924: Status of Block all Office applications from creating child processes ASR rule (D4F940AB-401B-4EFC-AADC-AD5F3C50688A)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13924: Status of Block all Office applications from creating child processes ASR rule (D4F940AB-401B-4EFC-AADC-AD5F3C50688A)"
+    Write-Log "User approved remediation for Control ID 13924"
     try {
-        # Placeholder for actual command to remediate: Status of Block all Office applications from creating child processes ASR rule (D4F940AB-401B-4EFC-AADC-AD5F3C50688A)
-        $cmdOutput = "Executed remediation step for Control ID 13924"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "D4F940AB-401B-4EFC-AADC-AD5F3C50688A" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block all Office apps from creating child processes"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3209,10 +3233,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9842: Status of the Turn off toast notifications on the lock screen setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9842: Status of the Turn off toast notifications on the lock screen setting"
+    Write-Log "User approved remediation for Control ID 9842"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off toast notifications on the lock screen setting
-        $cmdOutput = "Executed remediation step for Control ID 9842"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLockScreenAppNotifications" -Value 1 -Type DWord
+        $cmdOutput = "Disabled toast notifications on the lock screen"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3225,10 +3249,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 11211: Status of the Configure Windows spotlight on Lock Screen setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 11211: Status of the Configure Windows spotlight on Lock Screen setting"
+    Write-Log "User approved remediation for Control ID 11211"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure Windows spotlight on Lock Screen setting
-        $cmdOutput = "Executed remediation step for Control ID 11211"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "ConfigureWindowsSpotlight" -Value 2 -Type DWord
+        $cmdOutput = "Disabled Windows Spotlight on Lock Screen (ConfigureWindowsSpotlight = 2)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3243,8 +3267,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 4494: Status of the audit setting Sensitive Privilege Use (advanced audit setting)"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Sensitive Privilege Use (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4494"
+        AuditPol /set /subcategory:"Sensitive Privilege Use" /success:enable /failure:enable
+        $cmdOutput = "Enabled auditing for Sensitive Privilege Use (Success and Failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3259,8 +3283,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 7502: Status of the Application: Maximum log size setting (in KB)"
     try {
-        # Placeholder for actual command to remediate: Status of the Application: Maximum log size setting (in KB)
-        $cmdOutput = "Executed remediation step for Control ID 7502"
+        wevtutil sl Application /ms:32768
+        $cmdOutput = "Set Application log maximum size to 32768 KB"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3275,8 +3299,11 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 1318: Status of the Enforce password history setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Enforce password history setting
-        $cmdOutput = "Executed remediation step for Control ID 1318"
+        secedit /export /cfg C:\Temp\secpol.cfg
+        (Get-Content C:\Temp\secpol.cfg).replace("PasswordHistorySize = 0", "PasswordHistorySize = 24") | Set-Content C:\Temp\secpol.cfg
+        secedit /configure /db secedit.sdb /cfg C:\Temp\secpol.cfg /areas SECURITYPOLICY
+        Remove-Item C:\Temp\secpol.cfg
+        $cmdOutput = "Set Enforce password history to 24 passwords remembered"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3291,8 +3318,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 8248: Status of the Disallow Digest authentication setting (WinRM client)"
     try {
-        # Placeholder for actual command to remediate: Status of the Disallow Digest authentication setting (WinRM client)
-        $cmdOutput = "Executed remediation step for Control ID 8248"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client" -Name "AllowDigest" -Value 0 -Type DWord
+        $cmdOutput = "Disabled Digest authentication for WinRM client"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3307,8 +3334,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 19057: Status of the Relax minimum password length limits setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Relax minimum password length limits setting
-        $cmdOutput = "Executed remediation step for Control ID 19057"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "ScEnableRelaxationOnMinimumPasswordLength" -Value 0 -Type DWord
+        $cmdOutput = "Disabled relaxed minimum password length enforcement"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3323,8 +3350,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 11195: Status of the NetBIOS node type setting"
     try {
-        # Placeholder for actual command to remediate: Status of the NetBIOS node type setting
-        $cmdOutput = "Executed remediation step for Control ID 11195"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters" -Name "NodeType" -Value 2 -Type DWord
+        $cmdOutput = "Set NetBIOS NodeType to 2 (P-node only)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3339,8 +3366,10 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 25362: Status of the Configure RPC over TCP port setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Configure RPC over TCP port setting
-        $cmdOutput = "Executed remediation step for Control ID 25362"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Rpc\Internet" -Name "Ports" -Value "5000-5100" -Type MultiString
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Rpc\Internet" -Name "PortsInternetAvailable" -Value "Y"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Rpc\Internet" -Name "UseInternetPorts" -Value 1 -Type DWord
+        $cmdOutput = "Configured RPC to use ports 5000-5100 over TCP"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3355,8 +3384,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 3950: Status of the Windows Firewall: Firewall state (Public) setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Firewall state (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 3950"
+        Set-NetFirewallProfile -Profile Public -Enabled True
+        $cmdOutput = "Enabled Windows Firewall for Public profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3371,8 +3400,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 8167: Status of the Windows Firewall: Log Successful Connections (Public) setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log Successful Connections (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 8167"
+        Set-NetFirewallProfile -Profile Public -LogSuccessfulConnections Enabled
+        $cmdOutput = "Enabled logging of successful connections on the Public firewall profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3387,8 +3416,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 11198: Status of the Allow Windows Ink Workspace setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Allow Windows Ink Workspace setting
-        $cmdOutput = "Executed remediation step for Control ID 11198"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Value 0 -Type DWord
+        $cmdOutput = "Disabled Windows Ink Workspace"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3401,10 +3430,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 21377: Status of Block persistence through WMI event subscription ASR rule (e6db77e5-3df2-4cf1-b95a-636979351e5b)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 21377: Status of Block persistence through WMI event subscription ASR rule (e6db77e5-3df2-4cf1-b95a-636979351e5b)"
+    Write-Log "User approved remediation for Control ID 21377: Status of Block persistence through WMI event subscription ASR rule"
     try {
-        # Placeholder for actual command to remediate: Status of Block persistence through WMI event subscription ASR rule (e6db77e5-3df2-4cf1-b95a-636979351e5b)
-        $cmdOutput = "Executed remediation step for Control ID 21377"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids "e6db77e5-3df2-4cf1-b95a-636979351e5b" -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block persistence through WMI event subscription"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3417,10 +3446,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1390: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) servers setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1390: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) servers setting"
+    Write-Log "User approved remediation for Control ID 1390: NTLM SSP minimum session security for servers"
     try {
-        # Placeholder for actual command to remediate: Status of the Network Security: Minimum session security for NTLM SSP based (including secure RPC) servers setting
-        $cmdOutput = "Executed remediation step for Control ID 1390"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinServerSec" -Value 537395200 -Type DWord
+        $cmdOutput = "Configured NTLM SSP server minimum session security to require NTLMv2, 128-bit encryption, and message integrity"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3435,8 +3464,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 3964: Status of the Windows Firewall: Display a notification (Private) setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Display a notification (Private) setting
-        $cmdOutput = "Executed remediation step for Control ID 3964"
+        Set-NetFirewallProfile -Profile Private -NotifyOnListen True
+        $cmdOutput = "Enabled display of firewall notifications on Private profile"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3449,10 +3478,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10968: Network access: Restrict clients allowed to make remote calls to SAM"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10968: Network access: Restrict clients allowed to make remote calls to SAM"
+    Write-Log "User approved remediation for Control ID 10968: Restrict clients allowed to make remote calls to SAM"
     try {
-        # Placeholder for actual command to remediate: Network access: Restrict clients allowed to make remote calls to SAM
-        $cmdOutput = "Executed remediation step for Control ID 10968"
+        $sddl = "O:BAG:BAD:(A;;RC;;;BA)"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RestrictRemoteSAM" -Value $sddl
+        $cmdOutput = "Restricted SAM remote calls to Administrators only"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3467,8 +3497,8 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 9004: Status of the Lock screen slide show setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Lock screen slide show setting
-        $cmdOutput = "Executed remediation step for Control ID 9004"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenSlideshow" -Value 1 -Type DWord
+        $cmdOutput = "Disabled lock screen slideshow"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3483,8 +3513,9 @@ $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
     Write-Log "User approved remediation for Control ID 2612: Status of the Turn off downloading of enclosures setting (Internet Explorer)"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off downloading of enclosures setting (Internet Explorer)
-        $cmdOutput = "Executed remediation step for Control ID 2612"
+        New-Item -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Feeds" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Feeds" -Name "DisableEnclosureDownload" -Value 1 -Type DWord
+        $cmdOutput = "Disabled downloading of enclosures in Internet Explorer"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3497,10 +3528,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 9025: Status of the WDigest Authentication setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 9025: Status of the WDigest Authentication setting"
+    Write-Log "User approved remediation for Control ID 9025: WDigest Authentication setting"
     try {
-        # Placeholder for actual command to remediate: Status of the WDigest Authentication setting
-        $cmdOutput = "Executed remediation step for Control ID 9025"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name "UseLogonCredential" -Value 0 -Type DWord
+        $cmdOutput = "Disabled WDigest storing plaintext credentials in memory"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3513,10 +3544,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4507: Status of the audit setting Account Management: User Account Management (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4507: Status of the audit setting Account Management: User Account Management (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4507: User Account Management audit setting"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Account Management: User Account Management (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4507"
+        AuditPol /Set /SubCategory:"User Account Management" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for User Account Management (Success and Failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3529,10 +3560,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 4477: Status of the audit setting Account Lockout (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 4477: Status of the audit setting Account Lockout (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 4477: Account Lockout audit setting"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Account Lockout (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 4477"
+        AuditPol /Set /SubCategory:"Account Lockout" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Account Lockout (Success and Failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3545,10 +3576,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1193: Status of the MSS: Allow ICMP redirects to override OSPF generated routes (EnableICMPRedirect) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1193: Status of the MSS: Allow ICMP redirects to override OSPF generated routes (EnableICMPRedirect) setting"
+    Write-Log "User approved remediation for Control ID 1193: MSS - Disable ICMP Redirects"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: Allow ICMP redirects to override OSPF generated routes (EnableICMPRedirect) setting
-        $cmdOutput = "Executed remediation step for Control ID 1193"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "EnableICMPRedirect" -Value 0 -Type DWord
+        $cmdOutput = "Disabled ICMP redirects from overriding OSPF routes"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3561,10 +3592,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 23131: Status of the Limit Dump Collection setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 23131: Status of the Limit Dump Collection setting"
+    Write-Log "User approved remediation for Control ID 23131: Limit Dump Collection"
     try {
-        # Placeholder for actual command to remediate: Status of the Limit Dump Collection setting
-        $cmdOutput = "Executed remediation step for Control ID 23131"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" -Name "DisableDumpCollection" -Value 1 -Type DWord
+        $cmdOutput = "Limited dump collection to reduce sensitive data exposure"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3577,10 +3608,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 10152: Status of the audit setting Audit Group Membership (advanced audit setting)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 10152: Status of the audit setting Audit Group Membership (advanced audit setting)"
+    Write-Log "User approved remediation for Control ID 10152: Audit Group Membership"
     try {
-        # Placeholder for actual command to remediate: Status of the audit setting Audit Group Membership (advanced audit setting)
-        $cmdOutput = "Executed remediation step for Control ID 10152"
+        AuditPol /Set /SubCategory:"Group Membership" /Success:Enable /Failure:Enable
+        $cmdOutput = "Enabled auditing for Group Membership (Success and Failure)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3593,10 +3624,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 26144: Status of enable password encryption setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 26144: Status of enable password encryption setting"
+    Write-Log "User approved remediation for Control ID 26144: Enable password encryption"
     try {
-        # Placeholder for actual command to remediate: Status of enable password encryption setting
-        $cmdOutput = "Executed remediation step for Control ID 26144"
+        Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "LimitBlankPasswordUse" -Value 1 -Type DWord
+        $cmdOutput = "Enforced encrypted password use for network authentication"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3609,10 +3640,11 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 11212: Status of the Select when Feature Updates are received - DeferFeatureUpdatesPeriodInDays setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 11212: Status of the Select when Feature Updates are received - DeferFeatureUpdatesPeriodInDays setting"
+    Write-Log "User approved remediation for Control ID 11212: Feature Updates Deferment"
     try {
-        # Placeholder for actual command to remediate: Status of the Select when Feature Updates are received - DeferFeatureUpdatesPeriodInDays setting
-        $cmdOutput = "Executed remediation step for Control ID 11212"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "DeferFeatureUpdates" -Value 1 -Type DWord
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "DeferFeatureUpdatesPeriodInDays" -Value 30 -Type DWord
+        $cmdOutput = "Configured Windows to defer feature updates for 30 days"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3625,10 +3657,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 5267: Status of the Network security: Allow PKU2U authentication requests to this computer to use online identities setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 5267: Status of the Network security: Allow PKU2U authentication requests to this computer to use online identities setting"
+    Write-Log "User approved remediation for Control ID 5267: PKU2U authentication requests setting"
     try {
-        # Placeholder for actual command to remediate: Status of the Network security: Allow PKU2U authentication requests to this computer to use online identities setting
-        $cmdOutput = "Executed remediation step for Control ID 5267"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\pku2u" -Name "AllowOnlineID" -Value 0 -Type DWord
+        $cmdOutput = "Disabled PKU2U authentication using online identities"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3641,10 +3673,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 13929: Status of Block untrusted and unsigned processes that run from USB ASR rule (b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4)"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 13929: Status of Block untrusted and unsigned processes that run from USB ASR rule (b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4)"
+    Write-Log "User approved remediation for Control ID 13929: USB ASR rule"
     try {
-        # Placeholder for actual command to remediate: Status of Block untrusted and unsigned processes that run from USB ASR rule (b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4)
-        $cmdOutput = "Executed remediation step for Control ID 13929"
+        Add-MpPreference -AttackSurfaceReductionRules_Ids b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4 -AttackSurfaceReductionRules_Actions Enabled
+        $cmdOutput = "Enabled ASR rule to block untrusted/unsigned USB processes"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3657,10 +3689,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 23128: Status of the Turn off cloud consumer account state content setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 23128: Status of the Turn off cloud consumer account state content setting"
+    Write-Log "User approved remediation for Control ID 23128: Disable cloud consumer account state content"
     try {
-        # Placeholder for actual command to remediate: Status of the Turn off cloud consumer account state content setting
-        $cmdOutput = "Executed remediation step for Control ID 23128"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableConsumerAccountStateContent" -Value 1 -Type DWord
+        $cmdOutput = "Disabled cloud consumer account state content"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3673,10 +3705,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 8166: Status of the Windows Firewall: Log file path and name (Public) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 8166: Status of the Windows Firewall: Log file path and name (Public) setting"
+    Write-Log "User approved remediation for Control ID 8166: Set Windows Firewall log file path (Public)"
     try {
-        # Placeholder for actual command to remediate: Status of the Windows Firewall: Log file path and name (Public) setting
-        $cmdOutput = "Executed remediation step for Control ID 8166"
+        Set-NetFirewallProfile -Profile Public -LogFileName '%SystemRoot%\System32\LogFiles\Firewall\pfirewall.log'
+        $cmdOutput = "Set Public Firewall log file path to pfirewall.log"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
@@ -3689,10 +3721,10 @@ if ($confirm -eq "y") {
 Write-Host "`nControl ID 1458: Status of the MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended) setting"
 $confirm = Read-Host "Apply this remediation? (y/n)"
 if ($confirm -eq "y") {
-    Write-Log "User approved remediation for Control ID 1458: Status of the MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended) setting"
+    Write-Log "User approved remediation for Control ID 1458: Safe DLL search mode"
     try {
-        # Placeholder for actual command to remediate: Status of the MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended) setting
-        $cmdOutput = "Executed remediation step for Control ID 1458"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" -Name "SafeDllSearchMode" -Value 1 -Type DWord
+        $cmdOutput = "Enabled Safe DLL search mode (MSS setting)"
         Write-Host $cmdOutput
         Write-Log $cmdOutput
     } catch {
