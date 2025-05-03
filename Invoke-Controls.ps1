@@ -14,7 +14,7 @@
     A list of specific Control IDs to execute. If omitted, all available modules will be executed.
 
 .PARAMETER ModulesPath
-    Optional. The path to the directory containing control module (.psm1) files. Defaults to a '1431_ntt_mgmt__MODULES' 
+    Optional. The path to the directory containing control module (.psm1) files. Defaults to a 'CIS-MODULES' 
     subfolder in the script's directory.
 
 .EXAMPLE
