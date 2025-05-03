@@ -1,8 +1,8 @@
 # Logger.psm1
-# Provides centralized logging for CIS control modules
 
-# Generate log file name using date + random suffix
-$script:LogPath = "$PSScriptRoot\20250503_CIS-Remediation-Log_81FIGWyM.log"
+$script:LogPath = "$PSScriptRoot\$(Get-Date -Format 'yyyyMMdd')_CIS-Remediation-Log_{0}.log" -f (
+    -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
+)
 
 function Set-LogPath {
     param([string]$path)
