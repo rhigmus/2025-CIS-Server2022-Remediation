@@ -40,6 +40,12 @@ param (
     [string]$ModulesPath = "$PSScriptRoot\CIS-MODULES"
 )
 
+# Import logger module
+$loggerPath = Join-Path $PSScriptRoot "Logger.psm1"
+Import-Module $loggerPath -Force
+
+Write-Host "Logging to: $(Get-LogPath)"
+
 # Discover and import all module files
 $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter "Invoke-Control*.psm1"
 
