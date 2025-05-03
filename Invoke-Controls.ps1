@@ -35,7 +35,7 @@
 #>
 
 param (
-    [switch]$ApplyAll = $false,
+    [switch]$ApplyAll,
     [int[]]$ControlIds,
     [string]$ModulesPath = "$PSScriptRoot\CIS-MODULES"
 )
@@ -45,27 +45,35 @@ $loggerPath = Join-Path $PSScriptRoot "Logger.psm1"
 Import-Module $loggerPath -Force
 
 Write-Host "Logging to: $(Get-LogPath)"
+Write-Log "Starting remediation run. ApplyAll=$ApplyAll, ControlIds=$($ControlIds -join ', ')"
 
-# Discover and import all module files
+# Import all module files from the specified path
 $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter "Invoke-Control*.psm1"
-
 foreach ($mod in $moduleFiles) {
     Import-Module $mod.FullName -Force
+    Write-Log "Imported module: $($mod.Name)"
 }
 
 # Get all available Invoke-Control functions
 $invokeFunctions = Get-Command -Module (Get-Module) | Where-Object { $_.Name -like 'Invoke-Control*' }
 
-# Filter if specific control IDs were passed
+# Filter based on specified ControlIds (if any)
 if ($ControlIds) {
     $invokeFunctions = $invokeFunctions | Where-Object {
-        $id = ($_ -split 'Invoke-Control')[1]
-        $ControlIds -contains [int]$id
+        $funcName = $_.Name
+        if ($funcName -match 'Invoke-Control(\d+)$') {
+            $ControlIds -contains [int]$matches[1]
+        } else {
+            $false
+        }
     }
 }
 
-# Execute the functions
+# Execute selected functions
 foreach ($func in $invokeFunctions) {
     Write-Host "`n--- Executing $($func.Name) ---"
-    & $func.Name -Apply:$ApplyAll
+    Write-Log "Executing $($func.Name) with Apply=$($ApplyAll.IsPresent)"
+    & $func.Name -Apply:$ApplyAll.IsPresent
 }
+
+Write-Log "Remediation run complete."
