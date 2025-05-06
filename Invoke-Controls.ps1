@@ -41,8 +41,7 @@ param (
 )
 
 # Import logger module
-$loggerPath = Join-Path $PSScriptRoot "Logger.psm1"
-Import-Module $loggerPath -Force
+Import-Module -Name "$PSScriptRoot\Logger\Logger.psd1" -Force
 
 Write-Host "Logging to: $(Get-LogPath)"
 Write-Log "Starting remediation run. ApplyAll=$ApplyAll, ControlIds=$($ControlIds -join ', ')"
