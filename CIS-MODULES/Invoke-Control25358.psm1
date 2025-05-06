@@ -20,5 +20,5 @@ function Invoke-Control25358 {
             Write-Log $cmdOutput
         } catch {
             Write-Log "ERROR applying remediation for Control ID 25358: $_"
-}
+    }
 }
