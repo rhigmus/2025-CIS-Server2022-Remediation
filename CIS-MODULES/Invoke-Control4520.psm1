@@ -20,3 +20,4 @@ function Invoke-Control4520 {
         } catch {
             Write-Log "ERROR applying remediation for Control ID 4520: $_"
 }
+}

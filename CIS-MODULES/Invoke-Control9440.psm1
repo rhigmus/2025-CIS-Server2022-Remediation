@@ -20,3 +20,4 @@ function Invoke-Control9440 {
         } catch {
             Write-Log "ERROR applying remediation for Control ID 9440: $_"
 }
+}

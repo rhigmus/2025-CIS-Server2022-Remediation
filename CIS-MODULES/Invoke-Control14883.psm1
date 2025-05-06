@@ -18,3 +18,4 @@ function Invoke-Control14883 {
         } catch {
             Write-Log "ERROR applying remediation for Control ID 14883: $_"
 }
+}
