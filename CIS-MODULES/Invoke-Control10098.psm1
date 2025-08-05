@@ -20,6 +20,8 @@ function Invoke-Control10098 {
             Write-Host $cmdOutput
             Write-Log $cmdOutput
         } catch {
+            $ErrorMessage = $_.Exception.Message
             Write-Log "ERROR applying remediation for Control ID 10098: $_"
-}
+            Write-Log $ErrorMessage
+    }
 }

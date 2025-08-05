@@ -1,0 +1,21 @@
+function Invoke-Control19782 {
+    param([bool]$Apply = $false)
+
+    Write-Host "`nControl ID 19.7.8.2: Status of the Do not suggest third-party content in Windows spotlight setting"
+    if (-not $Apply) {
+        $confirm = Read-Host "Apply this remediation? (y/n)"
+        if ($confirm -ne "y") {
+            Write-Log "User skipped remediation for Control ID 19.7.8.2"
+            return
+        }
+    }
+        Write-Log "User approved remediation for Control ID 19.7.8.2: Disable third-party content in Spotlight"
+        try {
+            New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableThirdPartySuggestions" -PropertyType DWord -Value 1 -Force | Out-Null
+            $cmdOutput = "Disabled third-party suggestions in Windows Spotlight."
+            Write-Host $cmdOutput
+            Write-Log $cmdOutput
+        } catch {
+            Write-Log "ERROR applying remediation for Control ID 19.7.8.2: $_"
+}
+}

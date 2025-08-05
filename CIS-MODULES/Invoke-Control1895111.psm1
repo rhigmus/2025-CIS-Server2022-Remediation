@@ -1,0 +1,21 @@
+function Invoke-Control1895111 {
+    param([bool]$Apply = $false)
+
+    Write-Host "`nControl ID 18.9.51.1.1: Status of the Enable Windows NTP Client setting"
+    if (-not $Apply) {
+        $confirm = Read-Host "Apply this remediation? (y/n)"
+        if ($confirm -ne "y") {
+            Write-Log "User skipped remediation for Control ID 18.9.51.1.1"
+            return
+        }
+    }
+        Write-Log "User approved remediation for Control ID 18.9.51.1.1"
+        try {
+            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpClient" -Name "Enabled" -Value 1 -Type DWord
+            $cmdOutput = "Enabled Windows NTP Client"
+            Write-Host $cmdOutput
+            Write-Log $cmdOutput
+        } catch {
+            Write-Log "ERROR applying remediation for Control ID 18.9.51.1.1: $_"
+}
+}
