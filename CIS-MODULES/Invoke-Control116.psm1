@@ -9,13 +9,15 @@ function Invoke-Control116 {
             return
         }
     }
-        Write-Log "User approved remediation for Control ID 1.1.6: Status of the Relax minimum password length limits setting"
-        try {
-            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "ScEnableRelaxationOnMinimumPasswordLength" -Value 0 -Type DWord
-            $cmdOutput = "Disabled relaxed minimum password length enforcement"
-            Write-Host $cmdOutput
-            Write-Log $cmdOutput
-        } catch {
-            Write-Log "ERROR applying remediation for Control ID 1.1.6: $_"
-}
+
+    Write-Log "User approved remediation for Control ID 1.1.6: Status of the Relax minimum password length limits setting"
+    try {
+        # Set RelaxMinimumPasswordLengthLimits to 1 (Enabled)
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SAM" -Name "RelaxMinimumPasswordLengthLimits" -Value 1 -Type DWord
+        $cmdOutput = "Set RelaxMinimumPasswordLengthLimits to 1 (Enabled)"
+        Write-Host $cmdOutput
+        Write-Log $cmdOutput
+    } catch {
+        Write-Log "ERROR applying remediation for Control ID 1.1.6: $_"
+    }
 }
