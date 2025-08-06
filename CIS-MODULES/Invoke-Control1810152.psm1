@@ -10,7 +10,7 @@ function Invoke-Control1810152 {
     If specified, applies the remediation. Otherwise, only reports non-compliance.
 
     .NOTES
-    Reference: CIS Microsoft Windows Server 2022 Benchmark v1.0.0 - 18.10.15.2
+    Reference: CIS Microsoft Windows Server 2022 Benchmark v4.0.0 - 18.10.15.2
     Registry Path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI
     Value Name: EnumerateAdministrators
     Expected Value: 0 (REG_DWORD)

@@ -10,7 +10,7 @@ function Invoke-Control1810167 {
     If specified, applies the remediation. Otherwise, only reports non-compliance.
 
     .NOTES
-    Reference: CIS Microsoft Windows Server 2022 Benchmark v1.0.0 - 18.10.16.7
+    Reference: CIS Microsoft Windows Server 2022 Benchmark v4.0.0 - 18.10.16.7
     Registry Path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
     Value Name: LimitDumpCollection
     Expected Value: 1 (REG_DWORD)

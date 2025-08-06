@@ -1,23 +1,64 @@
 function Invoke-Control18111 {
-    param([bool]$Apply = $false)
+    <#
+    .SYNOPSIS
+    CIS 18.1.1.1 - Ensure 'Prevent enabling lock screen camera' is set to 'Enabled'
 
-    Write-Host "`nControl ID 18.1.1.1: Status of the Lock screen camera setting"
-    if (-not $Apply) {
-        $confirm = Read-Host "Apply this remediation? (y/n)"
-        if ($confirm -ne "y") {
-            Write-Log "User skipped remediation for Control ID 18.1.1.1"
-            return
-        }
+    .DESCRIPTION
+    Disables the lock screen camera toggle and prevents any camera access from the lock screen by setting NoLockScreenCamera = 1.
+
+    .PARAMETER Apply
+    If specified, applies the remediation. Otherwise, only reports non-compliance.
+
+    .NOTES
+    Reference: CIS Microsoft Windows Server 2022 Benchmark v4.0.0 - 18.1.1.1
+    Registry Path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization
+    Value Name: NoLockScreenCamera
+    Expected Value: 1 (REG_DWORD)
+    #>
+
+    [CmdletBinding()]
+    param (
+        [switch]$Apply
+    )
+
+    $RegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
+    $ValueName = "NoLockScreenCamera"
+    $ExpectedValue = 1
+
+    Write-Host "`nControl 18.1.1.1: Prevent enabling lock screen camera"
+
+    try {
+        $actualValue = Get-ItemProperty -Path $RegPath -Name $ValueName -ErrorAction Stop | Select-Object -ExpandProperty $ValueName
+    } catch {
+        $actualValue = $null
     }
-        Write-Log "User approved remediation for Control ID 18.1.1.1: Status of the Lock screen camera setting"
+
+    if ($actualValue -ne $ExpectedValue) {
+        Write-Host "[-] 18.1.1.1: Non-compliant. Current value: $actualValue" -ForegroundColor Yellow
+
+        if (-not $Apply) {
+            $confirm = Read-Host "Apply remediation for 18.1.1.1? (y/n)"
+            if ($confirm -ne "y") {
+                Write-Log "User skipped remediation for Control 18.1.1.1"
+                return
+            }
+        }
+
+        Write-Log "User approved remediation for Control 18.1.1.1"
+
         try {
-            # Disable camera access on the lock screen
-            New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -PropertyType DWord -Value 1 -Force | Out-Null
-    
-            $cmdOutput = "Disabled camera access on the lock screen (NoLockScreenCamera set to 1)."
-            Write-Host $cmdOutput
-            Write-Log $cmdOutput
+            if (-not (Test-Path $RegPath)) {
+                New-Item -Path $RegPath -Force | Out-Null
+            }
+
+            Set-ItemProperty -Path $RegPath -Name $ValueName -Value $ExpectedValue -Type DWord
+            Write-Host "[+] 18.1.1.1: Remediation applied. Set $ValueName to $ExpectedValue" -ForegroundColor Green
+            Write-Log "Successfully remediated 18.1.1.1: Set $ValueName to $ExpectedValue"
         } catch {
-            Write-Log "ERROR applying remediation for Control ID 18.1.1.1: $_"
-}
+            Write-Host "[!] 18.1.1.1: Failed to apply remediation: $_" -ForegroundColor Red
+            Write-Log "ERROR applying remediation for 18.1.1.1: $_"
+        }
+    } else {
+        Write-Host "[+] 18.1.1.1: Compliant. Value is already set to $ExpectedValue" -ForegroundColor Green
+    }
 }

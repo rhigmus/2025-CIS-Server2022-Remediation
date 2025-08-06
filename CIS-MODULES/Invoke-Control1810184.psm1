@@ -10,7 +10,7 @@ function Invoke-Control1810184 {
     If specified, applies the remediation. Otherwise, only reports non-compliance.
 
     .NOTES
-    Reference: CIS Microsoft Windows Server 2022 Benchmark v1.0.0 - 18.10.18.4
+    Reference: CIS Microsoft Windows Server 2022 Benchmark v140.0 - 18.10.18.4
     Registry Path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppInstaller
     Value Name: EnableLocalArchiveMalwareScanOverride
     Expected Value: 0 (REG_DWORD)

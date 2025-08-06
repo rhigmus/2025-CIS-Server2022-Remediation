@@ -10,7 +10,7 @@ function Invoke-Control1810133 {
     If specified, applies the remediation. Otherwise, only reports non-compliance.
 
     .NOTES
-    Reference: CIS Microsoft Windows Server 2022 Benchmark v1.0.0 - 18.10.13.3
+    Reference: CIS Microsoft Windows Server 2022 Benchmark v4.0.0 - 18.10.13.3
     Registry Path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent
     Value Name: DisableWindowsConsumerFeatures
     Expected Value: 1 (REG_DWORD)
