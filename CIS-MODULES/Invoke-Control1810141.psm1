@@ -1,7 +1,7 @@
 function Invoke-Control1810141 {
     param([bool]$Apply = $false)
 
-    Write-Host "`nControl ID 18.10.14.1: Status of Do not display the password reveal button"
+    Write-Host "`nControl ID 18.10.14.1: Status of the Require pin for pairing Enabled First Time OR Always setting"
     if (-not $Apply) {
         $confirm = Read-Host "Apply this remediation? (y/n)"
         if ($confirm -ne "y") {
@@ -9,11 +9,10 @@ function Invoke-Control1810141 {
             return
         }
     }
-        Write-Log "User approved remediation for Control ID 18.10.14.1: Status of Do not display the password reveal button"
+        Write-Log "User approved remediation for Control ID 18.10.14.1: Require PIN for device pairing"
         try {
-            # Disable the password reveal button
-            New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\CredUI" -Name "DisablePasswordReveal" -PropertyType DWord -Value 1 -Force | Out-Null
-            $cmdOutput = "Set DisablePasswordReveal to 1 under HKLM:\Software\Policies\Microsoft\Windows\CredUI"
+            New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Connect" -Name "RequirePinForPairing" -PropertyType DWord -Value 1 -Force | Out-Null
+            $cmdOutput = "Enabled PIN requirement for Bluetooth device pairing (RequirePinForPairing set to 1)."
             Write-Host $cmdOutput
             Write-Log $cmdOutput
         } catch {
